@@ -1,0 +1,14 @@
+name: HomoGUI
+main: jp.azisaba.main.homogui.HomoGUI
+version: 1.0.0
+author: siloneco
+description: "Homo gui plugin"
+api-version: 1.13
+commands:
+  gui:
+    usage: "/{LABEL}"
+    aliases: ["g"]
+    permission: homogui.command.gui
+permissions:
+  homogui.command.gui:
+    default: true
