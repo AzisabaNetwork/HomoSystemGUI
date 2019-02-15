@@ -1,5 +1,7 @@
 package jp.azisaba.main.homogui.listeners;
 
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,6 +14,7 @@ import jp.azisaba.main.homogui.HomoGUI;
 import jp.azisaba.main.homogui.gui.TicketConfirmGUI;
 import jp.azisaba.main.homogui.gui.TicketConfirmGUI.ConfirmType;
 import jp.azisaba.main.homogui.tickets.DataManager;
+import jp.azisaba.main.homogui.utils.Advancement;
 import jp.azisaba.main.homos.database.TicketManager;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
@@ -54,26 +57,38 @@ public class TicketConfirmGUIListener implements Listener {
 
 			ConfirmType type = getType(invTitle);
 
+			boolean success = false;
+
+			Advancement failAdv = new Advancement(Material.BARRIER, ChatColor.RED + "取引に失敗しました。");
+
 			if (type == ConfirmType.BUY) {
-				boolean success = buyTicket(p, num);
-
-				if (!success) {
-					p.sendMessage(ChatColor.RED + "失敗しました。");
-				} else {
-					p.sendMessage(ChatColor.GREEN + "取引に成功しました。");
-				}
+				success = buyTicket(p, num);
 			} else if (type == ConfirmType.SELL) {
-				boolean success = sellTicket(p, num);
-
-				if (!success) {
-					p.sendMessage(ChatColor.RED + "失敗しました。");
-				} else {
-					p.sendMessage(ChatColor.GREEN + "取引に成功しました。");
-				}
+				success = sellTicket(p, num);
 			} else {
 				p.closeInventory();
 				p.sendMessage(ChatColor.RED + "実行に失敗しました。");
 				return;
+			}
+
+			if (success) {
+				Advancement adv;
+
+				if (type == ConfirmType.BUY) {
+					adv = new Advancement(Material.PAPER, ChatColor.GREEN + "購入に成功しました！");
+				} else if (type == ConfirmType.SELL) {
+					adv = new Advancement(Material.GOLD_INGOT, ChatColor.GREEN + "売却に成功しました！");
+				} else {
+					adv = new Advancement(Material.PAPER, ChatColor.GREEN + "取引に成功しました！");
+				}
+
+				adv.sendAndDelete(p);
+				p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 1);
+
+				failAdv.unload(20);
+			} else {
+				failAdv.sendAndDelete(p);
+				p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
 			}
 
 			p.closeInventory();

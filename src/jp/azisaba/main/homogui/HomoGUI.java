@@ -11,6 +11,7 @@ import jp.azisaba.main.homogui.listeners.NumberGUIListener;
 import jp.azisaba.main.homogui.listeners.ServerSelectorGUIListener;
 import jp.azisaba.main.homogui.listeners.TicketConfirmGUIListener;
 import jp.azisaba.main.homogui.listeners.TicketGUIListener;
+import jp.azisaba.main.homogui.utils.Advancement;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
 
@@ -25,6 +26,8 @@ public class HomoGUI extends JavaPlugin {
 		HomoGUI.config.loadConfig();
 
 		setupEconomy();
+
+		Advancement.init(this);
 
 		Bukkit.getPluginManager().registerEvents(new DebugListener(), this);
 		Bukkit.getPluginManager().registerEvents(new MainGUIListener(this), this);
