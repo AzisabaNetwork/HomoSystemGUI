@@ -11,9 +11,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import jp.azisaba.main.homogui.HomoGUI;
 import jp.azisaba.main.homogui.gui.TicketConfirmGUI;
 import jp.azisaba.main.homogui.gui.TicketConfirmGUI.ConfirmType;
-import jp.azisaba.main.homogui.tickets.TicketManager;
-import jp.azisaba.main.homos.classes.PlayerData;
-import jp.azisaba.main.homos.database.SQLDataManager;
+import jp.azisaba.main.homogui.tickets.DataManager;
+import jp.azisaba.main.homos.database.TicketManager;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -97,12 +96,12 @@ public class TicketConfirmGUIListener implements Listener {
 			return false;
 		}
 
-		EconomyResponse r = econ.withdrawPlayer(p, TicketManager.getTicketValue() * num);
+		EconomyResponse r = econ.withdrawPlayer(p, DataManager.getTicketValue() * num);
 		if (!r.transactionSuccess()) {
 			return false;
 		}
 
-		TicketManager.addTicket(p, num);
+		DataManager.addTicket(p, num);
 		return true;
 	}
 
@@ -112,14 +111,14 @@ public class TicketConfirmGUIListener implements Listener {
 			return false;
 		}
 
-		double value = SQLDataManager.valueOfTicketsToConvertMoney(p.getUniqueId(), null, num);
+		double value = TicketManager.valueOfTicketsToConvertMoney(p.getUniqueId(), null, num);
 
 		EconomyResponse r = econ.depositPlayer(p, value);
 		if (!r.transactionSuccess()) {
 			return false;
 		}
 
-		TicketManager.removeTicket(p, num);
+		DataManager.removeTicket(p, num);
 		return true;
 	}
 }

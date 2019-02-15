@@ -23,7 +23,7 @@ import com.earth2me.essentials.User;
 import com.earth2me.essentials.UserMap;
 
 import jp.azisaba.main.homogui.HomoGUI;
-import jp.azisaba.main.homogui.tickets.TicketManager;
+import jp.azisaba.main.homogui.tickets.DataManager;
 import jp.azisaba.main.homogui.utils.ItemHelper;
 import jp.azisaba.main.homos.classes.PlayerData;
 import net.md_5.bungee.api.ChatColor;
@@ -120,7 +120,7 @@ public class MainGUI {
 			String name = user.getName();
 			BigDecimal money = user.getMoney();
 
-			PlayerData pd = TicketManager.getPlayerData(user.getConfigUUID());
+			PlayerData pd = DataManager.getPlayerData(user.getConfigUUID());
 			long ticketMoney = 0;
 			if (pd != null) {
 				ticketMoney = pd.getMoney();
@@ -198,7 +198,7 @@ public class MainGUI {
 		ItemStack skull = ItemHelper.createSkull(p);
 		ItemMeta meta = skull.getItemMeta();
 
-		int tickets = TicketManager.getPlayerData(p).getTickets();
+		int tickets = DataManager.getPlayerData(p).getTickets();
 		BigDecimal money = BigDecimal.valueOf(HomoGUI.getEconomy().getBalance(p));
 
 		String ticketStr = ChatColor.RED + "チケット" + ChatColor.GREEN + ": " + ChatColor.YELLOW + tickets;

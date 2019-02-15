@@ -17,7 +17,7 @@ import jp.azisaba.main.homogui.HomoGUI;
 import jp.azisaba.main.homogui.gui.NumberGUI;
 import jp.azisaba.main.homogui.gui.TicketConfirmGUI;
 import jp.azisaba.main.homogui.gui.TicketConfirmGUI.ConfirmType;
-import jp.azisaba.main.homogui.tickets.TicketManager;
+import jp.azisaba.main.homogui.tickets.DataManager;
 
 public class NumberGUIListener implements Listener {
 
@@ -110,13 +110,13 @@ public class NumberGUIListener implements Listener {
 
 			if (type == ConfirmType.BUY) {
 
-				if (!HomoGUI.getEconomy().has(p, TicketManager.getTicketValue() * tickets)) {
+				if (!HomoGUI.getEconomy().has(p, DataManager.getTicketValue() * tickets)) {
 					setBookString(inv, ChatColor.RED + "十分なお金がありません！");
 					p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
 					return;
 				}
 			} else if (type == ConfirmType.SELL) {
-				if (TicketManager.getPlayerData(p).getTickets() < tickets) {
+				if (DataManager.getPlayerData(p).getTickets() < tickets) {
 					setBookString(inv, ChatColor.RED + "十分なチケットがありません！");
 					p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
 					return;
