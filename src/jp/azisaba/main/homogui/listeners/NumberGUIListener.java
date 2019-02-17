@@ -116,6 +116,8 @@ public class NumberGUIListener implements Listener {
 			}
 
 			setBookString(inv, ChatColor.GOLD + "" + num);
+
+			p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 1, 1.2f);
 		} else if (strip.equals("エンター")) {
 
 			ItemStack book = inv.getItem(0);
