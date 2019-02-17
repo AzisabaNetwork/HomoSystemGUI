@@ -88,7 +88,7 @@ public class NumberGUIListener implements Listener {
 		} else if (strip.equals("最大値を指定する")) {
 			Economy econ = HomoGUI.getEconomy();
 			double balance = econ.getBalance(p);
-			BigInteger ticketValue = Homos.getMedianManager().getCurrentMedian();
+			BigInteger ticketValue = Homos.getTicketValueManager().getCurrentTicketValue();
 
 			long num;
 

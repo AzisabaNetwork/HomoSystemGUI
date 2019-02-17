@@ -29,7 +29,7 @@ public class DataManager {
 	}
 
 	public static BigInteger getTicketValue() {
-		return Homos.getMedianManager().getCurrentMedian();
+		return Homos.getTicketValueManager().getCurrentTicketValue();
 	}
 
 	public static PlayerData getPlayerData(Player p) {
