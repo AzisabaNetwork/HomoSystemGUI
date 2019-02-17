@@ -58,10 +58,17 @@ public class MainGUI {
 				List<String> lore = new ArrayList<>();
 
 				boolean containOpener = false;
+				BigDecimal before = BigDecimal.ZERO;
+				int rank = 0;
 				int count = 1;
 				for (Entry<String, BigDecimal> entry : moneyMap) {
 
-					if (count >= 11) {
+					if (entry.getValue().compareTo(before) != 0) {
+						rank = count;
+					}
+					before = entry.getValue();
+
+					if (count >= 15 + 1) {
 
 						if (!containOpener) {
 
@@ -69,7 +76,7 @@ public class MainGUI {
 								containOpener = true;
 
 								lore.add(ChatColor.AQUA + StringUtils.repeat("-", 30));
-								lore.add(ChatColor.DARK_BLUE + "YOU > " + ChatColor.LIGHT_PURPLE + count + "位 "
+								lore.add(ChatColor.DARK_BLUE + "YOU > " + ChatColor.LIGHT_PURPLE + rank + "位 "
 										+ ChatColor.YELLOW + entry.getKey() + ChatColor.GREEN + ": " + ChatColor.RED
 										+ entry.getValue());
 								break;
@@ -86,7 +93,7 @@ public class MainGUI {
 						prefix = ChatColor.DARK_BLUE + "YOU > ";
 					}
 
-					lore.add(prefix + ChatColor.LIGHT_PURPLE + count + "位 " + ChatColor.YELLOW + entry.getKey()
+					lore.add(prefix + ChatColor.LIGHT_PURPLE + rank + "位 " + ChatColor.YELLOW + entry.getKey()
 							+ ChatColor.GREEN + ": " + ChatColor.RED
 							+ entry.getValue());
 					count++;
