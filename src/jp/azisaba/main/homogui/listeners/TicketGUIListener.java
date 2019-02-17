@@ -42,9 +42,9 @@ public class TicketGUIListener implements Listener {
 		Inventory numberInv;
 
 		if (meta.getDisplayName().equals(TicketGUI.getBuyItem().getItemMeta().getDisplayName())) {
-			numberInv = NumberGUI.getInv(ConfirmType.BUY);
+			numberInv = NumberGUI.getInv(p, ConfirmType.BUY);
 		} else if (meta.getDisplayName().equals(TicketGUI.getSellItem().getItemMeta().getDisplayName())) {
-			numberInv = NumberGUI.getInv(ConfirmType.SELL);
+			numberInv = NumberGUI.getInv(p, ConfirmType.SELL);
 		} else {
 			return;
 		}

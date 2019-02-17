@@ -1,33 +1,49 @@
 package jp.azisaba.main.homogui.gui;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import jp.azisaba.main.homogui.gui.TicketConfirmGUI.ConfirmType;
 import jp.azisaba.main.homogui.utils.ItemHelper;
+import jp.azisaba.main.homos.Homos;
+import jp.azisaba.main.homos.database.TicketManager;
 
 public class NumberGUI {
 
-	public static Inventory getInv(ConfirmType type) {
+	public static Inventory getInv(Player p, ConfirmType type) {
 		Inventory inv = Bukkit.createInventory(null, 9 * 3, getInvTitle() + " - " + type.toString());
 
-		ItemStack result = ItemHelper.createItem(Material.WRITABLE_BOOK, ChatColor.GOLD + "0",
-				ChatColor.GRAY + "ここに説明文");
+		String desc = ChatColor.YELLOW + "チケット1枚あたり" + ChatColor.GREEN + ": " + ChatColor.RED;
+		BigDecimal value = BigDecimal.ZERO;
+		if (type == ConfirmType.BUY) {
+			value = new BigDecimal(Homos.getTicketValueManager().getCurrentTicketValue());
+		} else if (type == ConfirmType.SELL) {
+			BigInteger bigNum = BigInteger.valueOf(1);
+			value = TicketManager.valueOfTicketsToConvertMoney(p.getUniqueId(), null, bigNum);
+		}
+
+		desc += value.toString();
+
+		ItemStack result = ItemHelper.createItem(Material.WRITABLE_BOOK, ChatColor.GOLD + "0", desc);
 
 		ItemStack backSpace = ItemHelper.createSkull(ItemHelper.ARROW_LEFT, ChatColor.GOLD + "バックスペース",
 				ChatColor.GRAY + "");
 
+		ItemStack enter = ItemHelper.createItem(Material.PAPER, ChatColor.GOLD + "エンター", ChatColor.GRAY + "");
+		ItemStack cancel = ItemHelper.createItem(Material.BONE_MEAL, ChatColor.GOLD + "キャンセル", ChatColor.GRAY + "");
 		ItemStack zero = ItemHelper.createSkull(ItemHelper.ZERO, ChatColor.GOLD + "0", ChatColor.GRAY + "");
 		ItemStack one = ItemHelper.createSkull(ItemHelper.ONE, ChatColor.GOLD + "1", ChatColor.GRAY + "");
 		ItemStack two = ItemHelper.createSkull(ItemHelper.TWO, ChatColor.GOLD + "2", ChatColor.GRAY + "");
 		ItemStack three = ItemHelper.createSkull(ItemHelper.THREE, ChatColor.GOLD + "3", ChatColor.GRAY + "");
 		ItemStack four = ItemHelper.createSkull(ItemHelper.FOUR, ChatColor.GOLD + "4", ChatColor.GRAY + "");
-		ItemStack enter = ItemHelper.createItem(Material.PAPER, ChatColor.GOLD + "エンター", ChatColor.GRAY + "");
-		ItemStack cancel = ItemHelper.createItem(Material.BONE_MEAL, ChatColor.GOLD + "キャンセル", ChatColor.GRAY + "");
 		ItemStack five = ItemHelper.createSkull(ItemHelper.FIVE, ChatColor.GOLD + "5", ChatColor.GRAY + "");
 		ItemStack six = ItemHelper.createSkull(ItemHelper.SIX, ChatColor.GOLD + "6", ChatColor.GRAY + "");
 		ItemStack seven = ItemHelper.createSkull(ItemHelper.SEVEN, ChatColor.GOLD + "7", ChatColor.GRAY + "");
