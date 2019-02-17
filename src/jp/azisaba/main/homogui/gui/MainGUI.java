@@ -1,6 +1,7 @@
 package jp.azisaba.main.homogui.gui;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -121,16 +122,16 @@ public class MainGUI {
 			BigDecimal money = user.getMoney();
 
 			PlayerData pd = DataManager.getPlayerData(user.getConfigUUID());
-			long ticketMoney = 0;
+			BigInteger ticketMoney = BigInteger.ZERO;
 			if (pd != null) {
 				ticketMoney = pd.getMoney();
 			}
 
-			if (ticketMoney < 0) {
-				ticketMoney = 0;
+			if (ticketMoney.compareTo(BigInteger.ZERO) < 0) {
+				ticketMoney = BigInteger.ZERO;
 			}
 
-			moneyMap.put(name, money.add(BigDecimal.valueOf(ticketMoney)));
+			moneyMap.put(name, money.add(new BigDecimal(ticketMoney)));
 		}
 
 		List<Entry<String, BigDecimal>> entryList = new ArrayList<Entry<String, BigDecimal>>(moneyMap.entrySet());
@@ -198,10 +199,10 @@ public class MainGUI {
 		ItemStack skull = ItemHelper.createSkull(p);
 		ItemMeta meta = skull.getItemMeta();
 
-		int tickets = DataManager.getPlayerData(p).getTickets();
+		BigInteger tickets = DataManager.getPlayerData(p).getTickets();
 		BigDecimal money = BigDecimal.valueOf(HomoGUI.getEconomy().getBalance(p));
 
-		String ticketStr = ChatColor.RED + "チケット" + ChatColor.GREEN + ": " + ChatColor.YELLOW + tickets;
+		String ticketStr = ChatColor.RED + "チケット" + ChatColor.GREEN + ": " + ChatColor.YELLOW + tickets.toString();
 		String moneyStr = ChatColor.RED + "所持金" + ChatColor.GREEN + ": " + ChatColor.YELLOW + money.toPlainString();
 
 		meta.setDisplayName(ChatColor.YELLOW + p.getName() + ChatColor.RED + "の情報");

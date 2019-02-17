@@ -1,5 +1,6 @@
 package jp.azisaba.main.homogui.tickets;
 
+import java.math.BigInteger;
 import java.util.UUID;
 
 import org.bukkit.entity.Player;
@@ -11,23 +12,23 @@ import jp.azisaba.main.homos.database.TicketManager;
 
 public class DataManager {
 
-	public static boolean addTicket(Player p, int amount) {
+	public static boolean addTicket(Player p, BigInteger amount) {
 		return TicketManager.addTicket(p, amount);
 	}
 
-	public static boolean removeTicket(Player p, int amount) {
-		return  TicketManager.removeTicket(p, amount);
+	public static boolean removeTicket(Player p, BigInteger amount) {
+		return TicketManager.removeTicket(p, amount);
 	}
 
-	public static long getPlayerTicketRealValue(Player p) {
+	public static BigInteger getPlayerTicketRealValue(Player p) {
 		return PlayerDataManager.getPlayerData(p).getMoney();
 	}
 
-	public static int getTicketAmount(Player p) {
+	public static BigInteger getTicketAmount(Player p) {
 		return PlayerDataManager.getPlayerData(p).getTickets();
 	}
 
-	public static int getTicketValue() {
+	public static BigInteger getTicketValue() {
 		return Homos.getMedianManager().getCurrentMedian();
 	}
 

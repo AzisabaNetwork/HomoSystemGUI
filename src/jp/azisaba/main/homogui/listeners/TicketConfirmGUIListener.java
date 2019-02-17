@@ -1,5 +1,9 @@
 package jp.azisaba.main.homogui.listeners;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -53,7 +57,7 @@ public class TicketConfirmGUIListener implements Listener {
 		} else if (meta.getDisplayName().equals(ChatColor.GREEN + "確定")) {
 
 			String signMsg = inv.getItem(4).getItemMeta().getDisplayName();
-			int num = Integer.parseInt(ChatColor.stripColor(signMsg.substring(0, signMsg.indexOf("チケット"))));
+			long num = Long.parseLong(ChatColor.stripColor(signMsg.substring(0, signMsg.indexOf("チケット"))));
 
 			ConfirmType type = getType(invTitle);
 
@@ -105,35 +109,43 @@ public class TicketConfirmGUIListener implements Listener {
 		return null;
 	}
 
-	private boolean buyTicket(Player p, int num) {
+	private boolean buyTicket(Player p, long num) {
 		Economy econ = HomoGUI.getEconomy();
 		if (econ == null) {
 			return false;
 		}
 
-		EconomyResponse r = econ.withdrawPlayer(p, DataManager.getTicketValue() * num);
+		BigInteger bigIntNum = BigInteger.valueOf(num);
+
+		BigDecimal money = new BigDecimal(DataManager.getTicketValue()).multiply(new BigDecimal(bigIntNum));
+
+		EconomyResponse r = econ.withdrawPlayer(p, money.doubleValue());
 		if (!r.transactionSuccess()) {
+			Bukkit.broadcastMessage(r.errorMessage);
 			return false;
 		}
 
-		DataManager.addTicket(p, num);
+		DataManager.addTicket(p, bigIntNum);
 		return true;
 	}
 
-	private boolean sellTicket(Player p, int num) {
+	private boolean sellTicket(Player p, long num) {
 		Economy econ = HomoGUI.getEconomy();
 		if (econ == null) {
 			return false;
 		}
 
-		double value = TicketManager.valueOfTicketsToConvertMoney(p.getUniqueId(), null, num);
+		BigInteger bigNum = BigInteger.valueOf(num);
 
-		EconomyResponse r = econ.depositPlayer(p, value);
+		BigDecimal value = TicketManager.valueOfTicketsToConvertMoney(p.getUniqueId(), null, bigNum);
+
+		EconomyResponse r = econ.depositPlayer(p, value.doubleValue());
 		if (!r.transactionSuccess()) {
+			Bukkit.broadcastMessage(r.errorMessage);
 			return false;
 		}
 
-		DataManager.removeTicket(p, num);
+		DataManager.removeTicket(p, bigNum);
 		return true;
 	}
 }

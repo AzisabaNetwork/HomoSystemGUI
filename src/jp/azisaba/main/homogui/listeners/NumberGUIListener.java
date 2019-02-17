@@ -1,5 +1,7 @@
 package jp.azisaba.main.homogui.listeners;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.HashMap;
 
 import org.bukkit.ChatColor;
@@ -90,7 +92,7 @@ public class NumberGUIListener implements Listener {
 			}
 
 			if (canInput) {
-				int num = Integer.parseInt(current);
+				long num = Long.parseLong(current);
 				if (num <= 0) {
 					canInput = false;
 				}
@@ -110,13 +112,14 @@ public class NumberGUIListener implements Listener {
 
 			if (type == ConfirmType.BUY) {
 
-				if (!HomoGUI.getEconomy().has(p, DataManager.getTicketValue() * tickets)) {
+				BigDecimal value = new BigDecimal(DataManager.getTicketValue().multiply(BigInteger.valueOf(tickets)));
+				if (!HomoGUI.getEconomy().has(p, value.doubleValue())) {
 					setBookString(inv, ChatColor.RED + "十分なお金がありません！");
 					p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
 					return;
 				}
 			} else if (type == ConfirmType.SELL) {
-				if (DataManager.getPlayerData(p).getTickets() < tickets) {
+				if (DataManager.getPlayerData(p).getTickets().compareTo(BigInteger.valueOf(tickets)) < 0) {
 					setBookString(inv, ChatColor.RED + "十分なチケットがありません！");
 					p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
 					return;
