@@ -53,6 +53,11 @@ public class MainGUI {
 			@Override
 			public void run() {
 
+				Essentials ess = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
+				UserMap map = ess.getUserMap();
+
+				BigDecimal userMoney = map.getUser(p.getUniqueId()).getMoney();
+
 				List<Entry<String, BigDecimal>> moneyMap = sortedMoneyList();
 
 				List<String> lore = new ArrayList<>();
@@ -72,12 +77,18 @@ public class MainGUI {
 
 						if (!containOpener) {
 
-							if (entry.getKey().equals(p.getName())) {
+							if (userMoney.compareTo(BigDecimal.ZERO) <= 0) {
+								lore.add(ChatColor.AQUA + StringUtils.repeat("-", 30));
+								lore.add(ChatColor.DARK_BLUE + "YOU > " + ChatColor.GRAY + "所持金が0円のため対象外");
+								break;
+							}
+
+							if (entry.getValue().compareTo(userMoney) == 0) {
 								containOpener = true;
 
 								lore.add(ChatColor.AQUA + StringUtils.repeat("-", 30));
 								lore.add(ChatColor.DARK_BLUE + "YOU > " + ChatColor.LIGHT_PURPLE + rank + "位 "
-										+ ChatColor.YELLOW + entry.getKey() + ChatColor.GREEN + ": " + ChatColor.RED
+										+ ChatColor.YELLOW + p.getName() + ChatColor.GREEN + ": " + ChatColor.RED
 										+ entry.getValue());
 								break;
 							}
