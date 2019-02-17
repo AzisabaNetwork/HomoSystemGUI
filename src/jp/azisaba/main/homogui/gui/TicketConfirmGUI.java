@@ -9,7 +9,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class TicketConfirmGUI {
 
-	public static Inventory getInv(ConfirmType type, int num) {
+	public static Inventory getInv(ConfirmType type, long tickets) {
 		Inventory inv = Bukkit.createInventory(null, 9 * 1, getInvTitle(type));
 
 		ItemStack ok = getConfirmItem();
@@ -17,7 +17,7 @@ public class TicketConfirmGUI {
 
 		ItemStack sign = new ItemStack(Material.SIGN);
 		ItemMeta signMeta = sign.getItemMeta();
-		signMeta.setDisplayName(ChatColor.YELLOW + "" + num + "チケットを"
+		signMeta.setDisplayName(ChatColor.YELLOW + "" + tickets + "チケットを"
 				+ type.toString().replace("BUY", ChatColor.RED + "購入").replace("SELL", ChatColor.GREEN + "売却"));
 		sign.setItemMeta(signMeta);
 

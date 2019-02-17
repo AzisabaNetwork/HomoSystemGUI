@@ -5,6 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import jp.azisaba.main.homogui.gui.TicketConfirmGUI.ConfirmType;
 import jp.azisaba.main.homogui.utils.ItemHelper;
@@ -32,6 +33,10 @@ public class NumberGUI {
 		ItemStack seven = ItemHelper.createSkull(ItemHelper.SEVEN, ChatColor.GOLD + "7", ChatColor.GRAY + "");
 		ItemStack eight = ItemHelper.createSkull(ItemHelper.EIGHT, ChatColor.GOLD + "8", ChatColor.GRAY + "");
 		ItemStack nine = ItemHelper.createSkull(ItemHelper.NINE, ChatColor.GOLD + "9", ChatColor.GRAY + "");
+		ItemStack max = new ItemStack(Material.GOLD_INGOT);
+		ItemMeta maxMeta = max.getItemMeta();
+		maxMeta.setDisplayName(ChatColor.GOLD + "最大値を指定する");
+		max.setItemMeta(maxMeta);
 
 		inv.setItem(0, result);
 		inv.setItem(1, backSpace);
@@ -47,6 +52,7 @@ public class NumberGUI {
 		inv.setItem(15, seven);
 		inv.setItem(16, eight);
 		inv.setItem(17, nine);
+		inv.setItem(26, max);
 		return inv;
 	}
 

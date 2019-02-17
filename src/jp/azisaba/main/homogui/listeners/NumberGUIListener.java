@@ -20,6 +20,9 @@ import jp.azisaba.main.homogui.gui.NumberGUI;
 import jp.azisaba.main.homogui.gui.TicketConfirmGUI;
 import jp.azisaba.main.homogui.gui.TicketConfirmGUI.ConfirmType;
 import jp.azisaba.main.homogui.tickets.DataManager;
+import jp.azisaba.main.homos.Homos;
+import jp.azisaba.main.homos.database.PlayerDataManager;
+import net.milkbowl.vault.economy.Economy;
 
 public class NumberGUIListener implements Listener {
 
@@ -41,6 +44,10 @@ public class NumberGUIListener implements Listener {
 		}
 
 		e.setCancelled(true);
+
+		String str = invTitle;
+		str = str.substring(str.indexOf("-") + 1, str.length()).trim();
+		ConfirmType type = ConfirmType.valueOf(str);
 
 		if (clicked.containsKey(p) && clicked.get(p) + 50 >= System.currentTimeMillis()) {
 			return;
@@ -78,6 +85,37 @@ public class NumberGUIListener implements Listener {
 		} else if (strip.equals("キャンセル")) {
 			p.closeInventory();
 			p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1, 1);
+		} else if (strip.equals("最大値を指定する")) {
+			Economy econ = HomoGUI.getEconomy();
+			double balance = econ.getBalance(p);
+			BigInteger ticketValue = Homos.getMedianManager().getCurrentMedian();
+
+			long num;
+
+			if (type == ConfirmType.BUY) {
+				BigDecimal amount = BigDecimal.valueOf(balance).divide(new BigDecimal(ticketValue), 2,
+						BigDecimal.ROUND_HALF_UP);
+				num = 0L;
+
+				if (amount.compareTo(BigDecimal.valueOf(Long.MAX_VALUE)) > 0) {
+					num = Long.MAX_VALUE;
+				} else {
+					amount.setScale(0, BigDecimal.ROUND_DOWN);
+					num = amount.longValue();
+				}
+			} else if (type == ConfirmType.SELL) {
+				BigInteger tickets = PlayerDataManager.getPlayerData(p).getTickets();
+
+				if (tickets.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) > 0) {
+					num = Long.MAX_VALUE;
+				} else {
+					num = tickets.longValue();
+				}
+			} else {
+				num = 0L;
+			}
+
+			setBookString(inv, ChatColor.GOLD + "" + num);
 		} else if (strip.equals("エンター")) {
 
 			ItemStack book = inv.getItem(0);
@@ -85,17 +123,14 @@ public class NumberGUIListener implements Listener {
 
 			boolean canInput = false;
 			try {
-				Integer.parseInt(current);
+				long value = Long.parseLong(current);
 				canInput = true;
-			} catch (Exception ex) {
-				canInput = false;
-			}
 
-			if (canInput) {
-				long num = Long.parseLong(current);
-				if (num <= 0) {
+				if (value <= 0) {
 					canInput = false;
 				}
+			} catch (Exception ex) {
+				canInput = false;
 			}
 
 			if (!canInput) {
@@ -104,11 +139,7 @@ public class NumberGUIListener implements Listener {
 				return;
 			}
 
-			int tickets = Integer.parseInt(current);
-
-			String str = invTitle;
-			str = str.substring(str.indexOf("-") + 1, str.length()).trim();
-			ConfirmType type = ConfirmType.valueOf(str);
+			long tickets = Long.parseLong(current);
 
 			if (type == ConfirmType.BUY) {
 
@@ -184,8 +215,8 @@ public class NumberGUIListener implements Listener {
 		inv.setItem(0, book);
 	}
 
-	private void clickEnter(Inventory inv, int num, Player p, ConfirmType type) {
-		Inventory confirmInv = TicketConfirmGUI.getInv(type, num);
+	private void clickEnter(Inventory inv, long tickets, Player p, ConfirmType type) {
+		Inventory confirmInv = TicketConfirmGUI.getInv(type, tickets);
 		p.openInventory(confirmInv);
 	}
 
