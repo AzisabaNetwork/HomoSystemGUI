@@ -32,8 +32,11 @@ public class NumberGUI {
 
 		desc += value.toString();
 
-		ItemStack result = ItemHelper.createItem(Material.WRITABLE_BOOK, ChatColor.GOLD + "0", desc,
-				ChatColor.GRAY + "10%手数料として引かれています");
+		String[] descs = { desc, "" };
+		if (type == ConfirmType.SELL) {
+			descs[1] = ChatColor.GRAY + "10%手数料として引かれています";
+		}
+		ItemStack result = ItemHelper.createItem(Material.WRITABLE_BOOK, ChatColor.GOLD + "0", descs);
 
 		ItemStack backSpace = ItemHelper.createSkull(ItemHelper.ARROW_LEFT, ChatColor.GOLD + "バックスペース",
 				ChatColor.GRAY + "");
