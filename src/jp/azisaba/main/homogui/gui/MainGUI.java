@@ -68,6 +68,8 @@ public class MainGUI {
 				int count = 1;
 				for (Entry<String, BigDecimal> entry : moneyMap) {
 
+					entry.setValue(entry.getValue().setScale(1, BigDecimal.ROUND_DOWN));
+
 					if (entry.getValue().compareTo(before) != 0) {
 						rank = count;
 					}
@@ -83,7 +85,7 @@ public class MainGUI {
 								break;
 							}
 
-							if (entry.getValue().compareTo(userMoney) == 0) {
+							if (entry.getKey().equals(p.getName())) {
 								containOpener = true;
 
 								lore.add(ChatColor.AQUA + StringUtils.repeat("-", 30));
@@ -106,7 +108,7 @@ public class MainGUI {
 
 					lore.add(prefix + ChatColor.LIGHT_PURPLE + rank + "位 " + ChatColor.YELLOW + entry.getKey()
 							+ ChatColor.GREEN + ": " + ChatColor.RED
-							+ entry.getValue());
+							+ entry.getValue().toString());
 					count++;
 				}
 
