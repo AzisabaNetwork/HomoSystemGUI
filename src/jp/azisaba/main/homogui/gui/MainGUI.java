@@ -179,7 +179,7 @@ public class MainGUI {
 	public static ItemStack getCAItem() {
 		ItemStack ca = new ItemStack(Material.ANVIL);
 		ItemMeta caMeta = ca.getItemMeta();
-		caMeta.setDisplayName(ChatColor.RED + "オークションメニューを開く");
+		caMeta.setDisplayName(ChatColor.RED + "販売/オークション");
 		ca.setItemMeta(caMeta);
 
 		return ca;
