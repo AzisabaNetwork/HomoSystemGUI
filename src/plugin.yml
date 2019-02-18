@@ -1,6 +1,6 @@
 name: HomoGUI
 main: jp.azisaba.main.homogui.HomoGUI
-version: 1.0.6
+version: 1.0.7
 author: siloneco
 description: "Homo gui plugin"
 api-version: 1.13
