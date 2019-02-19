@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,7 +17,6 @@ import jp.azisaba.main.homogui.HomoGUI;
 import jp.azisaba.main.homogui.gui.TicketConfirmGUI;
 import jp.azisaba.main.homogui.gui.TicketConfirmGUI.ConfirmType;
 import jp.azisaba.main.homogui.tickets.DataManager;
-import jp.azisaba.main.homogui.utils.Advancement;
 import jp.azisaba.main.homos.database.TicketManager;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
@@ -61,40 +59,23 @@ public class TicketConfirmGUIListener implements Listener {
 
 			ConfirmType type = getType(invTitle);
 
-			boolean success = false;
+			new Thread() {
+				public void run() {
 
-			Advancement failAdv = new Advancement(Material.BARRIER, ChatColor.RED + "取引に失敗しました。");
+					if (type == ConfirmType.BUY) {
+						buyTicket(p, num);
+					} else if (type == ConfirmType.SELL) {
+						sellTicket(p, num);
+					} else {
+						p.closeInventory();
+						p.sendMessage(ChatColor.RED + "実行に失敗しました。");
+						return;
+					}
 
-			if (type == ConfirmType.BUY) {
-				success = buyTicket(p, num);
-			} else if (type == ConfirmType.SELL) {
-				success = sellTicket(p, num);
-			} else {
-				p.closeInventory();
-				p.sendMessage(ChatColor.RED + "実行に失敗しました。");
-				return;
-			}
-
-			if (success) {
-				Advancement adv;
-
-				if (type == ConfirmType.BUY) {
-					adv = new Advancement(Material.PAPER, ChatColor.GREEN + "購入に成功しました！");
-				} else if (type == ConfirmType.SELL) {
-					adv = new Advancement(Material.GOLD_INGOT, ChatColor.GREEN + "売却に成功しました！");
-				} else {
-					adv = new Advancement(Material.PAPER, ChatColor.GREEN + "取引に成功しました！");
 				}
+			}.start();
 
-				adv.sendAndDelete(p);
-				p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 1);
-
-				failAdv.unload(20);
-			} else {
-				failAdv.sendAndDelete(p);
-				p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
-			}
-
+			p.sendTitle("", ChatColor.RED + "" + ChatColor.BOLD + "処理を実行中...", 0, 20 * 3, 20);
 			p.closeInventory();
 		}
 	}
@@ -109,10 +90,11 @@ public class TicketConfirmGUIListener implements Listener {
 		return null;
 	}
 
-	private boolean buyTicket(Player p, long num) {
+	private void buyTicket(Player p, long num) {
 		Economy econ = HomoGUI.getEconomy();
 		if (econ == null) {
-			return false;
+			sendTitle(p, ConfirmType.BUY, false);
+			return;
 		}
 
 		BigInteger bigIntNum = BigInteger.valueOf(num);
@@ -122,17 +104,20 @@ public class TicketConfirmGUIListener implements Listener {
 		EconomyResponse r = econ.withdrawPlayer(p, money.doubleValue());
 		if (!r.transactionSuccess()) {
 			Bukkit.broadcastMessage(r.errorMessage);
-			return false;
+			sendTitle(p, ConfirmType.BUY, false);
+			return;
 		}
 
 		DataManager.addTicket(p, bigIntNum);
-		return true;
+		sendTitle(p, ConfirmType.BUY, true);
+		return;
 	}
 
-	private boolean sellTicket(Player p, long num) {
+	private void sellTicket(Player p, long num) {
 		Economy econ = HomoGUI.getEconomy();
 		if (econ == null) {
-			return false;
+			sendTitle(p, ConfirmType.SELL, false);
+			return;
 		}
 
 		BigInteger bigNum = BigInteger.valueOf(num);
@@ -142,10 +127,33 @@ public class TicketConfirmGUIListener implements Listener {
 		EconomyResponse r = econ.depositPlayer(p, value.doubleValue());
 		if (!r.transactionSuccess()) {
 			Bukkit.broadcastMessage(r.errorMessage);
-			return false;
+			sendTitle(p, ConfirmType.SELL, false);
+			return;
 		}
 
 		DataManager.removeTicket(p, bigNum);
-		return true;
+		sendTitle(p, ConfirmType.SELL, true);
+		return;
+	}
+
+	private void sendTitle(Player p, ConfirmType type, boolean success) {
+
+		if (success) {
+			String sub = "";
+
+			if (type == ConfirmType.BUY) {
+				sub = ChatColor.DARK_GREEN + "購入に成功しました！";
+			} else if (type == ConfirmType.SELL) {
+				sub = ChatColor.DARK_GREEN + "売却に成功しました！";
+			} else {
+				sub = ChatColor.DARK_GREEN + "取引に成功しました！";
+			}
+
+			p.sendTitle("", sub, 0, 40, 10);
+			p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 1);
+		} else {
+			p.sendTitle("", ChatColor.RED + "取引に失敗しました。", 0, 40, 10);
+			p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+		}
 	}
 }

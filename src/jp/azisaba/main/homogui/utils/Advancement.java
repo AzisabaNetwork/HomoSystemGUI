@@ -126,7 +126,7 @@ public class Advancement {
 				send(p, false);
 				Bukkit.getUnsafe().removeAdvancement(id);
 			}
-		}.runTaskLater(plugin, 20);
+		}.runTaskLater(plugin, 20 * 3);
 	}
 
 	public void sendAndDelete(Collection<? extends Player> players) {
