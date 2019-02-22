@@ -91,7 +91,7 @@ public class NumberGUIForSell extends ClickableGUI {
 	}
 
 	private String getInvTitle() {
-		return ChatColor.RED + "Enter Number";
+		return ChatColor.RED + "Enter Number for Sell";
 	}
 
 	private HashMap<Player, Long> lastClicked = new HashMap<>();

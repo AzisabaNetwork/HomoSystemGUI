@@ -84,12 +84,12 @@ public class TicketConfirmGUIForBuy extends ClickableGUI {
 	@Override
 	public Inventory getInventory(Player p, Object... objects) {
 
-		int tickets = 0;
+		long tickets = 0;
 		if (objects.length <= 0) {
 			return null;
 		} else {
-			if (objects[0] instanceof Integer) {
-				tickets = (Integer) objects[0];
+			if (objects[0] instanceof Long) {
+				tickets = (Long) objects[0];
 			}
 		}
 
