@@ -16,8 +16,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import jp.azisaba.main.homogui.tickets.DataManager;
 import jp.azisaba.main.homogui.utils.ItemHelper;
-import jp.azisaba.main.homos.Homos;
 import jp.azisaba.main.homos.database.PlayerDataManager;
+import jp.azisaba.main.homos.database.TicketManager;
 
 public class NumberGUIForSell extends ClickableGUI {
 
@@ -41,7 +41,7 @@ public class NumberGUIForSell extends ClickableGUI {
 	public Inventory getInventory(Player p, Object... objects) {
 		Inventory inv = Bukkit.createInventory(null, getInvSize(), getInvTitle());
 
-		inv.setItem(0, getResultItem());
+		inv.setItem(0, getResultItem(p));
 		inv.setItem(1, backSpace);
 		inv.setItem(4, zero);
 		inv.setItem(5, one);
@@ -78,12 +78,17 @@ public class NumberGUIForSell extends ClickableGUI {
 		max = ItemHelper.createItem(Material.GOLD_INGOT, ChatColor.GOLD + "最大値を指定する");
 	}
 
-	private ItemStack getResultItem() {
+	private ItemStack getResultItem(Player p) {
 		String desc = ChatColor.YELLOW + "チケット1枚あたり" + ChatColor.GREEN + ": " + ChatColor.RED;
 		BigDecimal value = BigDecimal.ZERO;
-		value = new BigDecimal(Homos.getTicketValueManager().getCurrentTicketValue());
+
+		BigInteger bigNum = BigInteger.valueOf(1);
+		value = TicketManager.valueOfTicketsToConvertMoney(p.getUniqueId(), null, bigNum);
+
 		desc += value.toString();
-		return ItemHelper.createItem(Material.WRITABLE_BOOK, ChatColor.GOLD + "0", desc);
+
+		String line2 = ChatColor.GRAY + "10%手数料として引かれています";
+		return ItemHelper.createItem(Material.WRITABLE_BOOK, ChatColor.GOLD + "0", desc, line2);
 	}
 
 	private int getInvSize() {
