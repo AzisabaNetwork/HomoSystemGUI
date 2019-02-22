@@ -5,12 +5,8 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import jp.azisaba.main.homogui.commands.GUICommand;
-import jp.azisaba.main.homogui.listeners.DebugListener;
-import jp.azisaba.main.homogui.listeners.MainGUIListener;
-import jp.azisaba.main.homogui.listeners.NumberGUIListener;
-import jp.azisaba.main.homogui.listeners.ServerSelectorGUIListener;
-import jp.azisaba.main.homogui.listeners.TicketConfirmGUIListener;
-import jp.azisaba.main.homogui.listeners.TicketGUIListener;
+import jp.azisaba.main.homogui.gui.ClickableGUIController;
+import jp.azisaba.main.homogui.gui.GUIClickedListenerHub;
 import jp.azisaba.main.homogui.utils.Advancement;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
@@ -18,6 +14,8 @@ import net.milkbowl.vault.economy.Economy;
 public class HomoGUI extends JavaPlugin {
 
 	private static PluginConfig config;
+
+	public static final String voteUrl = "https://minecraft.jp/servers/azisaba.net/vote";
 
 	@Override
 	public void onEnable() {
@@ -29,12 +27,9 @@ public class HomoGUI extends JavaPlugin {
 
 		Advancement.init(this);
 
-		Bukkit.getPluginManager().registerEvents(new DebugListener(), this);
-		Bukkit.getPluginManager().registerEvents(new MainGUIListener(this), this);
-		Bukkit.getPluginManager().registerEvents(new TicketGUIListener(), this);
-		Bukkit.getPluginManager().registerEvents(new ServerSelectorGUIListener(), this);
-		Bukkit.getPluginManager().registerEvents(new NumberGUIListener(), this);
-		Bukkit.getPluginManager().registerEvents(new TicketConfirmGUIListener(), this);
+		ClickableGUIController.registerAll();
+
+		Bukkit.getPluginManager().registerEvents(new GUIClickedListenerHub(), this);
 
 		Bukkit.getPluginCommand("gui").setExecutor(new GUICommand());
 		Bukkit.getPluginCommand("gui").setPermissionMessage(ChatColor.RED + "権限がないようです。運営に報告してください。");
