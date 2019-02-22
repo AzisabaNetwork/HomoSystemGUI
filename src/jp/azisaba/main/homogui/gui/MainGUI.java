@@ -3,7 +3,6 @@ package jp.azisaba.main.homogui.gui;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -14,7 +13,9 @@ import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -26,29 +27,67 @@ import com.earth2me.essentials.UserMap;
 import jp.azisaba.main.homogui.HomoGUI;
 import jp.azisaba.main.homogui.tickets.DataManager;
 import jp.azisaba.main.homogui.utils.ItemHelper;
+import jp.azisaba.main.homos.JSONMessage;
 import jp.azisaba.main.homos.classes.PlayerData;
 import net.md_5.bungee.api.ChatColor;
 
-public class MainGUI {
+public class MainGUI extends ClickableGUI {
 
-	public static String getInvTitle() {
-		return ChatColor.YELLOW + "Main Menu";
+	@Override
+	public void onClick(Player p, Inventory inv, ItemStack item, InventoryAction action) {
+		ItemMeta meta = item.getItemMeta();
+
+		if (meta.getDisplayName().equals(caDisplay)) {
+			p.closeInventory();
+			p.performCommand("ca");
+		} else if (meta.getDisplayName().equals(ticketDisplay)) {
+			Inventory ticketInv = ClickableGUIController.getGUI(TicketGUI.class).getInventory(p);
+			p.openInventory(ticketInv);
+		} else if (meta.getDisplayName().equals(voteDisplay)) {
+			sendVoteURL(p);
+			p.closeInventory();
+		} else if (meta.getDisplayName().equals(serverDisplay)) {
+			p.openInventory(ClickableGUIController.getGUI(ServerSelectGUI.class).getInventory(p));
+		}
 	}
 
-	public static Inventory getInv(Player player) {
-		Inventory inv = Bukkit.createInventory(null, 9 * 3, getInvTitle());
+	@Override
+	public boolean cancelEvent(Player p, Inventory inv, ItemStack item, InventoryAction action) {
+		return true;
+	}
 
-		ItemStack ticket = getTicketItem();
-		ItemStack ca = getCAItem();
-		ItemStack head = getPlayerSkull(player);
-		ItemStack vote = getVoteItem();
-		ItemStack server = getServerSelector();
-		ItemStack moneyRank = getMoneyRankingItem();
+	@Override
+	@SuppressWarnings("deprecation")
+	public boolean isSameInventory(Inventory inv) {
+
+		boolean sameName = inv.getTitle().equals(getInvTitle());
+		boolean sameSize = inv.getSize() == getInvSize();
+
+		return sameName && sameSize;
+	}
+
+	private final String ticketDisplay = ChatColor.YELLOW + "チケット売買";
+	private final String caDisplay = ChatColor.RED + "販売/オークション";
+	private final String voteDisplay = ChatColor.AQUA + "アジ鯖に投票！";
+	private final String serverDisplay = ChatColor.GREEN + "サーバー選択";
+
+	@Override
+	public Inventory getInventory(Player p, Object... objects) {
+		Inventory inv = Bukkit.createInventory(null, getInvSize(), getInvTitle());
+
+		ItemStack ticket = ItemHelper.createItem(Material.PAPER, ticketDisplay, ChatColor.GREEN + "チケットの売買が行えます");
+		ItemStack ca = ItemHelper.createItem(Material.ANVIL, caDisplay);
+		ItemStack head = getPlayerSkull(p);
+		ItemStack vote = ItemHelper.createItem(Material.DIAMOND, voteDisplay, ChatColor.RED + "クリックで投票リンクを表示！");
+		ItemStack server = ItemHelper.createItem(Material.NETHER_STAR, serverDisplay,
+				ChatColor.RED + "ほかのサーバーに移動することができます");
+		ItemStack moneyRank = ItemHelper.createItem(Material.GOLD_INGOT, ChatColor.GREEN + "総資金ランキング",
+				ChatColor.RED + "取得中...");
 		ItemMeta moneyRankMeta = moneyRank.getItemMeta();
 
 		new Thread(new Runnable() {
 
-			private Player p = player;
+			private Player player = p;
 
 			@Override
 			public void run() {
@@ -85,12 +124,12 @@ public class MainGUI {
 								break;
 							}
 
-							if (entry.getKey().equals(p.getName())) {
+							if (entry.getKey().equals(player.getName())) {
 								containOpener = true;
 
 								lore.add(ChatColor.AQUA + StringUtils.repeat("-", 30));
 								lore.add(ChatColor.DARK_BLUE + "YOU > " + ChatColor.LIGHT_PURPLE + rank + "位 "
-										+ ChatColor.YELLOW + p.getName() + ChatColor.GREEN + ": " + ChatColor.RED
+										+ ChatColor.YELLOW + player.getName() + ChatColor.GREEN + ": " + ChatColor.RED
 										+ entry.getValue());
 								break;
 							}
@@ -101,7 +140,7 @@ public class MainGUI {
 					}
 
 					String prefix = "";
-					if (entry.getKey().equals(p.getName())) {
+					if (entry.getKey().equals(player.getName())) {
 						containOpener = true;
 						prefix = ChatColor.DARK_BLUE + "YOU > ";
 					}
@@ -125,6 +164,7 @@ public class MainGUI {
 		inv.setItem(16, head);
 		inv.setItem(22, vote);
 		inv.setItem(26, server);
+
 		return inv;
 	}
 
@@ -158,7 +198,6 @@ public class MainGUI {
 
 		Collections.sort(entryList, new Comparator<Entry<String, BigDecimal>>() {
 			public int compare(Entry<String, BigDecimal> obj1, Entry<String, BigDecimal> obj2) {
-				// 4. 昇順
 				return obj2.getValue().compareTo(obj1.getValue());
 			}
 		});
@@ -166,69 +205,36 @@ public class MainGUI {
 		return entryList;
 	}
 
-	public static ItemStack getTicketItem() {
-		ItemStack ticket = new ItemStack(Material.PAPER);
-		ItemMeta ticketMeta = ticket.getItemMeta();
-		ticketMeta.setDisplayName(ChatColor.YELLOW + "チケット売買");
-		ticketMeta.setLore(Arrays.asList(ChatColor.GREEN + "チケットの売買が行えます"));
-		ticket.setItemMeta(ticketMeta);
-
-		return ticket;
-	}
-
-	public static ItemStack getCAItem() {
-		ItemStack ca = new ItemStack(Material.ANVIL);
-		ItemMeta caMeta = ca.getItemMeta();
-		caMeta.setDisplayName(ChatColor.RED + "販売/オークション");
-		ca.setItemMeta(caMeta);
-
-		return ca;
-	}
-
-	public static ItemStack getMoneyRankingItem() {
-		ItemStack moneyRank = new ItemStack(Material.GOLD_INGOT);
-		ItemMeta moneyRankMeta = moneyRank.getItemMeta();
-		moneyRankMeta.setDisplayName(ChatColor.GREEN + "総資金ランキング");
-		moneyRankMeta.setLore(Arrays.asList(ChatColor.RED + "取得中..."));
-		moneyRank.setItemMeta(moneyRankMeta);
-
-		return moneyRank;
-	}
-
-	public static ItemStack getVoteItem() {
-		ItemStack vote = new ItemStack(Material.DIAMOND);
-		ItemMeta meta = vote.getItemMeta();
-		meta.setDisplayName(ChatColor.AQUA + "アジ鯖に投票！");
-		meta.setLore(Arrays.asList(ChatColor.RED + "クリックで投票リンクを表示！"));
-		vote.setItemMeta(meta);
-
-		return vote;
-	}
-
-	public static ItemStack getServerSelector() {
-		ItemStack item = new ItemStack(Material.NETHER_STAR);
-		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(ChatColor.GREEN + "サーバー選択");
-		meta.setLore(Arrays.asList(ChatColor.RED + "ほかのサーバーに移動することができます"));
-		item.setItemMeta(meta);
-
-		return item;
-	}
-
 	public static ItemStack getPlayerSkull(Player p) {
-		ItemStack skull = ItemHelper.createSkull(p);
-		ItemMeta meta = skull.getItemMeta();
 
 		BigInteger tickets = DataManager.getPlayerData(p).getTickets();
 		BigDecimal money = BigDecimal.valueOf(HomoGUI.getEconomy().getBalance(p));
 
+		String displayName = ChatColor.YELLOW + p.getName() + ChatColor.RED + "の情報";
+
 		String ticketStr = ChatColor.RED + "チケット" + ChatColor.GREEN + ": " + ChatColor.YELLOW + tickets.toString();
 		String moneyStr = ChatColor.RED + "所持金" + ChatColor.GREEN + ": " + ChatColor.YELLOW + money.toPlainString();
 
-		meta.setDisplayName(ChatColor.YELLOW + p.getName() + ChatColor.RED + "の情報");
-		meta.setLore(Arrays.asList(ticketStr, moneyStr));
-
-		skull.setItemMeta(meta);
+		ItemStack skull = ItemHelper.createSkull(p, displayName, ticketStr, moneyStr);
 		return skull;
+	}
+
+	public void sendVoteURL(Player p) {
+		JSONMessage msg = JSONMessage.create().bar(40).newline();
+		msg.then(ChatColor.GREEN + "ありがとうございます！ 投票リンクは");
+		msg.then(ChatColor.RED + "こちら").openURL(HomoGUI.voteUrl);
+		msg.then(ChatColor.GREEN + "です！").newline();
+		msg.then(ChatColor.YELLOW + HomoGUI.voteUrl).openURL(HomoGUI.voteUrl);
+		msg.bar(40);
+		msg.send(p);
+		p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+	}
+
+	private String getInvTitle() {
+		return ChatColor.YELLOW + "Main Menu";
+	}
+
+	private int getInvSize() {
+		return 9 * 3;
 	}
 }

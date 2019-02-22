@@ -5,7 +5,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import jp.azisaba.main.homogui.gui.MainGUI;
+import jp.azisaba.main.homogui.gui.ClickableGUIController;
 import net.md_5.bungee.api.ChatColor;
 
 public class GUICommand implements CommandExecutor {
@@ -19,7 +19,7 @@ public class GUICommand implements CommandExecutor {
 		}
 
 		Player p = (Player) sender;
-		p.openInventory(MainGUI.getInv(p));
+		p.openInventory(ClickableGUIController.getMainInv(p));
 		return true;
 	}
 }
