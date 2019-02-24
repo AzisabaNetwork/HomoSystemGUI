@@ -2,15 +2,8 @@ package jp.azisaba.main.homogui.gui;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.UUID;
 
-import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -20,15 +13,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.earth2me.essentials.Essentials;
-import com.earth2me.essentials.User;
-import com.earth2me.essentials.UserMap;
-
 import jp.azisaba.main.homogui.HomoGUI;
 import jp.azisaba.main.homogui.tickets.DataManager;
 import jp.azisaba.main.homogui.utils.ItemHelper;
+import jp.azisaba.main.homogui.utils.RankingFetcher;
 import jp.azisaba.main.homos.JSONMessage;
-import jp.azisaba.main.homos.classes.PlayerData;
 import net.md_5.bungee.api.ChatColor;
 
 public class MainGUI extends ClickableGUI {
@@ -92,64 +81,7 @@ public class MainGUI extends ClickableGUI {
 			@Override
 			public void run() {
 
-				Essentials ess = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
-				UserMap map = ess.getUserMap();
-
-				BigDecimal userMoney = map.getUser(p.getUniqueId()).getMoney();
-
-				List<Entry<String, BigDecimal>> moneyMap = sortedMoneyList();
-
-				List<String> lore = new ArrayList<>();
-
-				boolean containOpener = false;
-				BigDecimal before = BigDecimal.ZERO;
-				int rank = 0;
-				int count = 1;
-				for (Entry<String, BigDecimal> entry : moneyMap) {
-
-					entry.setValue(entry.getValue().setScale(1, BigDecimal.ROUND_DOWN));
-
-					if (entry.getValue().compareTo(before) != 0) {
-						rank = count;
-					}
-					before = entry.getValue();
-
-					if (count >= 15 + 1) {
-
-						if (!containOpener) {
-
-							if (userMoney.compareTo(BigDecimal.ZERO) <= 0) {
-								lore.add(ChatColor.AQUA + StringUtils.repeat("-", 30));
-								lore.add(ChatColor.DARK_BLUE + "YOU > " + ChatColor.GRAY + "所持金が0円のため対象外");
-								break;
-							}
-
-							if (entry.getKey().equals(player.getName())) {
-								containOpener = true;
-
-								lore.add(ChatColor.AQUA + StringUtils.repeat("-", 30));
-								lore.add(ChatColor.DARK_BLUE + "YOU > " + ChatColor.LIGHT_PURPLE + rank + "位 "
-										+ ChatColor.YELLOW + player.getName() + ChatColor.GREEN + ": " + ChatColor.RED
-										+ entry.getValue());
-								break;
-							}
-						}
-
-						count++;
-						continue;
-					}
-
-					String prefix = "";
-					if (entry.getKey().equals(player.getName())) {
-						containOpener = true;
-						prefix = ChatColor.DARK_BLUE + "YOU > ";
-					}
-
-					lore.add(prefix + ChatColor.LIGHT_PURPLE + rank + "位 " + ChatColor.YELLOW + entry.getKey()
-							+ ChatColor.GREEN + ": " + ChatColor.RED
-							+ entry.getValue().toString());
-					count++;
-				}
+				List<String> lore = RankingFetcher.getDataByString(player, 15);
 
 				moneyRankMeta.setLore(lore);
 				moneyRank.setItemMeta(moneyRankMeta);
@@ -168,42 +100,42 @@ public class MainGUI extends ClickableGUI {
 		return inv;
 	}
 
-	private synchronized static List<Entry<String, BigDecimal>> sortedMoneyList() {
-
-		HashMap<String, BigDecimal> moneyMap = new HashMap<>();
-
-		Essentials ess = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
-		UserMap map = ess.getUserMap();
-
-		for (UUID uuid : map.getAllUniqueUsers()) {
-			User user = ess.getUser(uuid);
-
-			String name = user.getName();
-			BigDecimal money = user.getMoney();
-
-			PlayerData pd = DataManager.getPlayerData(user.getConfigUUID());
-			BigInteger ticketMoney = BigInteger.ZERO;
-			if (pd != null) {
-				ticketMoney = pd.getMoney();
-			}
-
-			if (ticketMoney.compareTo(BigInteger.ZERO) < 0) {
-				ticketMoney = BigInteger.ZERO;
-			}
-
-			moneyMap.put(name, money.add(new BigDecimal(ticketMoney)));
-		}
-
-		List<Entry<String, BigDecimal>> entryList = new ArrayList<Entry<String, BigDecimal>>(moneyMap.entrySet());
-
-		Collections.sort(entryList, new Comparator<Entry<String, BigDecimal>>() {
-			public int compare(Entry<String, BigDecimal> obj1, Entry<String, BigDecimal> obj2) {
-				return obj2.getValue().compareTo(obj1.getValue());
-			}
-		});
-
-		return entryList;
-	}
+//	private synchronized static List<Entry<String, BigDecimal>> sortedMoneyList() {
+//
+//		HashMap<String, BigDecimal> moneyMap = new HashMap<>();
+//
+//		Essentials ess = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
+//		UserMap map = ess.getUserMap();
+//
+//		for (UUID uuid : map.getAllUniqueUsers()) {
+//			User user = ess.getUser(uuid);
+//
+//			String name = user.getName();
+//			BigDecimal money = user.getMoney();
+//
+//			PlayerData pd = DataManager.getPlayerData(user.getConfigUUID());
+//			BigInteger ticketMoney = BigInteger.ZERO;
+//			if (pd != null) {
+//				ticketMoney = pd.getMoney();
+//			}
+//
+//			if (ticketMoney.compareTo(BigInteger.ZERO) < 0) {
+//				ticketMoney = BigInteger.ZERO;
+//			}
+//
+//			moneyMap.put(name, money.add(new BigDecimal(ticketMoney)));
+//		}
+//
+//		List<Entry<String, BigDecimal>> entryList = new ArrayList<Entry<String, BigDecimal>>(moneyMap.entrySet());
+//
+//		Collections.sort(entryList, new Comparator<Entry<String, BigDecimal>>() {
+//			public int compare(Entry<String, BigDecimal> obj1, Entry<String, BigDecimal> obj2) {
+//				return obj2.getValue().compareTo(obj1.getValue());
+//			}
+//		});
+//
+//		return entryList;
+//	}
 
 	public static ItemStack getPlayerSkull(Player p) {
 
