@@ -100,43 +100,6 @@ public class MainGUI extends ClickableGUI {
 		return inv;
 	}
 
-//	private synchronized static List<Entry<String, BigDecimal>> sortedMoneyList() {
-//
-//		HashMap<String, BigDecimal> moneyMap = new HashMap<>();
-//
-//		Essentials ess = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
-//		UserMap map = ess.getUserMap();
-//
-//		for (UUID uuid : map.getAllUniqueUsers()) {
-//			User user = ess.getUser(uuid);
-//
-//			String name = user.getName();
-//			BigDecimal money = user.getMoney();
-//
-//			PlayerData pd = DataManager.getPlayerData(user.getConfigUUID());
-//			BigInteger ticketMoney = BigInteger.ZERO;
-//			if (pd != null) {
-//				ticketMoney = pd.getMoney();
-//			}
-//
-//			if (ticketMoney.compareTo(BigInteger.ZERO) < 0) {
-//				ticketMoney = BigInteger.ZERO;
-//			}
-//
-//			moneyMap.put(name, money.add(new BigDecimal(ticketMoney)));
-//		}
-//
-//		List<Entry<String, BigDecimal>> entryList = new ArrayList<Entry<String, BigDecimal>>(moneyMap.entrySet());
-//
-//		Collections.sort(entryList, new Comparator<Entry<String, BigDecimal>>() {
-//			public int compare(Entry<String, BigDecimal> obj1, Entry<String, BigDecimal> obj2) {
-//				return obj2.getValue().compareTo(obj1.getValue());
-//			}
-//		});
-//
-//		return entryList;
-//	}
-
 	public static ItemStack getPlayerSkull(Player p) {
 
 		BigInteger tickets = DataManager.getPlayerData(p).getTickets();

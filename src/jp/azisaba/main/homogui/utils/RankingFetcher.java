@@ -18,8 +18,8 @@ import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
 import com.earth2me.essentials.UserMap;
 
-import jp.azisaba.main.homogui.tickets.DataManager;
 import jp.azisaba.main.homos.classes.PlayerData;
+import jp.azisaba.main.homos.database.PlayerDataManager;
 import net.md_5.bungee.api.ChatColor;
 
 public class RankingFetcher {
@@ -31,17 +31,16 @@ public class RankingFetcher {
 		Essentials ess = (Essentials) Bukkit.getPluginManager().getPlugin("Essentials");
 		UserMap map = ess.getUserMap();
 
-		for (UUID uuid : map.getAllUniqueUsers()) {
-			User user = ess.getUser(uuid);
+		List<UUID> uuidList = new ArrayList<UUID>(map.getAllUniqueUsers());
+		List<PlayerData> playerDataList = PlayerDataManager.getPlayerDataListByUUIDList(uuidList);
+
+		for (PlayerData data : playerDataList) {
+			User user = ess.getUser(data.getUuid());
 
 			String name = user.getName();
 			BigDecimal money = user.getMoney();
 
-			PlayerData pd = DataManager.getPlayerData(user.getConfigUUID());
-			BigInteger ticketMoney = BigInteger.ZERO;
-			if (pd != null) {
-				ticketMoney = pd.getMoney();
-			}
+			BigInteger ticketMoney = data.getMoney();
 
 			if (ticketMoney.compareTo(BigInteger.ZERO) < 0) {
 				ticketMoney = BigInteger.ZERO;
