@@ -52,8 +52,24 @@ public class TicketConfirmGUIForBuy extends ClickableGUI {
 						return;
 					}
 
-					DataManager.addTicket(p, bigIntNum);
-					sendTitle(p, true);
+					boolean success = false;
+					try {
+						success = DataManager.addTicket(p, bigIntNum);
+					} catch (Exception e) {
+						e.printStackTrace();
+						success = false;
+					}
+
+					if (!success) {
+						r = econ.depositPlayer(p, money.doubleValue());
+						if (!r.transactionSuccess()) {
+							Bukkit.broadcastMessage(r.errorMessage);
+						}
+						sendTitle(p, false);
+						return;
+					} else {
+						sendTitle(p, true);
+					}
 					return;
 				}
 			}.start();

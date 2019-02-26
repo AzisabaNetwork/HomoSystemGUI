@@ -53,8 +53,24 @@ public class TicketConfirmGUIForSell extends ClickableGUI {
 						return;
 					}
 
-					DataManager.removeTicket(p, bigNum);
-					sendTitle(p, true);
+					boolean success = false;
+					try {
+						success = DataManager.removeTicket(p, bigNum);
+					} catch (Exception e) {
+						e.printStackTrace();
+						success = false;
+					}
+
+					if (!success) {
+						r = econ.withdrawPlayer(p, value.doubleValue());
+						if (!r.transactionSuccess()) {
+							Bukkit.broadcastMessage(r.errorMessage);
+						}
+						sendTitle(p, false);
+						return;
+					} else {
+						sendTitle(p, true);
+					}
 					return;
 				}
 			}.start();
