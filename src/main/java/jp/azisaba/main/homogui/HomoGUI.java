@@ -7,7 +7,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import jp.azisaba.main.homogui.commands.GUICommand;
 import jp.azisaba.main.homogui.gui.ClickableGUIController;
 import jp.azisaba.main.homogui.gui.GUIClickedListenerHub;
-import jp.azisaba.main.homogui.utils.Advancement;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
 
@@ -24,8 +23,6 @@ public class HomoGUI extends JavaPlugin {
 		HomoGUI.config.loadConfig();
 
 		setupEconomy();
-
-		Advancement.init(this);
 
 		ClickableGUIController.registerAll();
 
