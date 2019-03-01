@@ -110,7 +110,7 @@ public class MainGUI extends ClickableGUI {
 
 		String ticketStr = ChatColor.RED + "チケット" + ChatColor.GREEN + ": " + ChatColor.YELLOW + tickets.toString();
 		String moneyStr = ChatColor.RED + "所持金" + ChatColor.GREEN + ": " + ChatColor.YELLOW
-				+ money.setScale(2, RoundingMode.DOWN).toString();
+				+ money.setScale(2, RoundingMode.HALF_EVEN).toString();
 
 		ItemStack skull = ItemHelper.createSkull(p, displayName, ticketStr, moneyStr);
 		return skull;
