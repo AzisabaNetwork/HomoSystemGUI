@@ -2,6 +2,7 @@ package jp.azisaba.main.homogui.gui;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -108,7 +109,8 @@ public class MainGUI extends ClickableGUI {
 		String displayName = ChatColor.YELLOW + p.getName() + ChatColor.RED + "の情報";
 
 		String ticketStr = ChatColor.RED + "チケット" + ChatColor.GREEN + ": " + ChatColor.YELLOW + tickets.toString();
-		String moneyStr = ChatColor.RED + "所持金" + ChatColor.GREEN + ": " + ChatColor.YELLOW + money.toPlainString();
+		String moneyStr = ChatColor.RED + "所持金" + ChatColor.GREEN + ": " + ChatColor.YELLOW
+				+ money.setScale(2, RoundingMode.DOWN).toString();
 
 		ItemStack skull = ItemHelper.createSkull(p, displayName, ticketStr, moneyStr);
 		return skull;
