@@ -7,6 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import jp.azisaba.main.homogui.commands.GUICommand;
 import jp.azisaba.main.homogui.gui.ClickableGUIController;
 import jp.azisaba.main.homogui.gui.GUIClickedListenerHub;
+import jp.azisaba.main.homogui.listeners.BalanceCommandListener;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
 
@@ -27,6 +28,7 @@ public class HomoGUI extends JavaPlugin {
 		ClickableGUIController.registerAll();
 
 		Bukkit.getPluginManager().registerEvents(new GUIClickedListenerHub(), this);
+		Bukkit.getPluginManager().registerEvents(new BalanceCommandListener(this), this);
 
 		Bukkit.getPluginCommand("gui").setExecutor(new GUICommand());
 		Bukkit.getPluginCommand("gui").setPermissionMessage(ChatColor.RED + "権限がないようです。運営に報告してください。");
