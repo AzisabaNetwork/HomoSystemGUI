@@ -1,6 +1,5 @@
 package jp.azisaba.main.homogui.gui;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashMap;
 
@@ -80,7 +79,7 @@ public class NumberGUIForSell extends ClickableGUI {
 
 	private ItemStack getResultItem(Player p) {
 		String desc = ChatColor.YELLOW + "チケット1枚あたり" + ChatColor.GREEN + ": " + ChatColor.RED;
-		BigDecimal value = BigDecimal.ZERO;
+		BigInteger value = BigInteger.ZERO;
 
 		BigInteger bigNum = BigInteger.valueOf(1);
 		value = TicketManager.valueOfTicketsToConvertMoney(p.getUniqueId(), null, bigNum);

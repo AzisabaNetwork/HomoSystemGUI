@@ -1,6 +1,5 @@
 package jp.azisaba.main.homogui.gui;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import org.bukkit.Bukkit;
@@ -44,7 +43,7 @@ public class TicketConfirmGUIForSell extends ClickableGUI {
 
 					BigInteger bigNum = BigInteger.valueOf(num);
 
-					BigDecimal value = TicketManager.valueOfTicketsToConvertMoney(p.getUniqueId(), null, bigNum);
+					BigInteger value = TicketManager.valueOfTicketsToConvertMoney(p.getUniqueId(), null, bigNum);
 
 					EconomyResponse r = econ.depositPlayer(p, value.doubleValue());
 					if (!r.transactionSuccess()) {
