@@ -20,6 +20,8 @@ public class HomoGUI extends JavaPlugin {
 	@Override
 	public void onEnable() {
 
+		instance = this;
+
 		HomoGUI.config = new PluginConfig(this);
 		HomoGUI.config.loadConfig();
 
@@ -32,6 +34,9 @@ public class HomoGUI extends JavaPlugin {
 
 		Bukkit.getPluginCommand("gui").setExecutor(new GUICommand());
 		Bukkit.getPluginCommand("gui").setPermissionMessage(ChatColor.RED + "権限がないようです。運営に報告してください。");
+
+		this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+		ServerSelectConfig.load(this);
 
 		Bukkit.getLogger().info(getName() + " enabled.");
 	}
@@ -73,5 +78,11 @@ public class HomoGUI extends JavaPlugin {
 
 	public static Economy getEconomy() {
 		return econ;
+	}
+
+	private static HomoGUI instance;
+
+	public static HomoGUI getInstance() {
+		return instance;
 	}
 }

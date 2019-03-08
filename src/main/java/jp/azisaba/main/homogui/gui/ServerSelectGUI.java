@@ -1,14 +1,20 @@
 package jp.azisaba.main.homogui.gui;
 
+import java.util.HashMap;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import jp.azisaba.main.homogui.utils.ItemHelper;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+
+import jp.azisaba.main.homogui.HomoGUI;
+import jp.azisaba.main.homogui.ServerItem;
+import jp.azisaba.main.homogui.ServerSelectConfig;
 
 public class ServerSelectGUI extends ClickableGUI {
 
@@ -16,6 +22,27 @@ public class ServerSelectGUI extends ClickableGUI {
 
 	@Override
 	public void onClick(Player p, Inventory inv, ItemStack item, InventoryAction action) {
+		ServerItem serverItem = null;
+		for (ServerItem search : ServerSelectConfig.getItems().values()) {
+			if (!search.getItem().equals(item)) {
+				continue;
+			}
+			serverItem = search;
+			break;
+		}
+
+		if (serverItem == null) {
+			return;
+		}
+
+		String server = serverItem.getServerName();
+		boolean closeInv = serverItem.isCloseInv();
+
+		sendPlayer(p, server);
+
+		if (closeInv) {
+			p.closeInventory();
+		}
 		return;
 	}
 
@@ -29,8 +56,10 @@ public class ServerSelectGUI extends ClickableGUI {
 
 		if (inv == null) {
 			inv = Bukkit.createInventory(null, getInvSize(), getInvTitle());
-			ItemStack item = ItemHelper.createItem(Material.BARRIER, ChatColor.RED + "未実装...");
-			inv.setItem(13, item);
+			HashMap<Integer, ServerItem> items = ServerSelectConfig.getItems();
+			for (int place : items.keySet()) {
+				inv.setItem(place, items.get(place).getItem());
+			}
 		}
 
 		return this.inv;
@@ -51,6 +80,13 @@ public class ServerSelectGUI extends ClickableGUI {
 	}
 
 	private int getInvSize() {
-		return 9 * 3;
+		return ServerSelectConfig.getInventorySize();
+	}
+
+	private void sendPlayer(Player player, String server) {
+		ByteArrayDataOutput out = ByteStreams.newDataOutput();
+		out.writeUTF("Connect");
+		out.writeUTF(server);
+		player.sendPluginMessage(HomoGUI.getInstance(), "BungeeCord", out.toByteArray());
 	}
 }
