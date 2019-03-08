@@ -110,18 +110,17 @@ public class ServerSelectConfig {
 				String playerName = conf.getString(key + ".Item.PlayerName", null);
 				if (base64 == null && playerName == null) {
 					plugin.getLogger().warning("There is no player data.");
-					continue;
-				}
-
-				if (base64 == null && playerName != null) {
+					item = ItemHelper.createItem(Material.BARRIER, title, desc.toArray(new String[desc.size()]));
+				} else if (base64 == null && playerName != null) {
 					base64 = PlayerSkinUtils.getBase64EncodedSkin(playerName);
 					if (base64 == null) {
 						plugin.getLogger().warning("There is no player called '" + playerName + "'");
-						continue;
+						item = ItemHelper.createItem(Material.BARRIER, title, desc.toArray(new String[desc.size()]));
 					}
 				}
 
-				item = ItemHelper.createSkull(base64, title, desc.toArray(new String[desc.size()]));
+				if (item == null)
+					item = ItemHelper.createSkull(base64, title, desc.toArray(new String[desc.size()]));
 
 				if (enchant) {
 					ItemHelper.addEnchant(item);
