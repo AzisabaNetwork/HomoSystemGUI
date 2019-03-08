@@ -37,7 +37,8 @@ public class BalanceCommandListener implements Listener {
 		if (labels.contains(label.toLowerCase())) {
 			new BukkitRunnable() {
 				public void run() {
-					p.sendMessage(ChatColor.GRAY + "所持金や総資金、ランキングの確認は" + ChatColor.RED + "/g" + ChatColor.GRAY + "を推奨しています");
+					p.sendMessage(
+							ChatColor.GRAY + "所持金や総資金、ランキングの確認は" + ChatColor.RED + "/g" + ChatColor.GRAY + "を推奨しています");
 				}
 			}.runTaskLater(plugin, 1);
 		}

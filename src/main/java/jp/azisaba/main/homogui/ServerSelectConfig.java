@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import jp.azisaba.main.homogui.utils.ItemHelper;
+import jp.azisaba.main.homogui.utils.PlayerSkinUtils;
 
 public class ServerSelectConfig {
 
@@ -106,11 +107,14 @@ public class ServerSelectConfig {
 
 			if (type == Material.PLAYER_HEAD) {
 				String base64 = conf.getString(key + ".Item.Skin", null);
-				if (base64 == null) {
-					plugin.getLogger()
-							.warning("There is no skin value. You have to set skin(base64 value) in (" + key
-									+ ".Item.Skin)");
+				String playerName = conf.getString(key + ".Item.PlayerName", null);
+				if (base64 == null && playerName == null) {
+					plugin.getLogger().warning("There is no player data.");
 					continue;
+				}
+
+				if (base64 == null && playerName != null) {
+					base64 = PlayerSkinUtils.getBase64EncodedSkin(playerName);
 				}
 
 				item = ItemHelper.createSkull(base64, title, desc.toArray(new String[desc.size()]));
