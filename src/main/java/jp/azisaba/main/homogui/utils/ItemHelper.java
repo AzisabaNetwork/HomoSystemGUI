@@ -9,7 +9,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -261,6 +263,13 @@ public class ItemHelper {
 
 		meta.setLore(list);
 
+		item.setItemMeta(meta);
+	}
+
+	public static void addEnchant(ItemStack item) {
+		ItemMeta meta = item.getItemMeta();
+		meta.addEnchant(Enchantment.DURABILITY, 1, true);
+		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 		item.setItemMeta(meta);
 	}
 

@@ -16,6 +16,8 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import jp.azisaba.main.homogui.utils.ItemHelper;
+
 public class ServerSelectConfig {
 
 	private static boolean loaded = false;
@@ -66,6 +68,7 @@ public class ServerSelectConfig {
 			int place;
 
 			Material type;
+			ItemStack item = null;
 
 			String title = conf.getString(key + ".Item.Title", null);
 			List<String> desc = conf.getStringList(key + ".Item.Desc");
@@ -101,7 +104,26 @@ public class ServerSelectConfig {
 			}
 			desc = newDesc;
 
-			ItemStack item = createItem(type, title, desc, enchant, amount);
+			if (type == Material.PLAYER_HEAD) {
+				String base64 = conf.getString(key + ".Item.Skin", null);
+				if (base64 == null) {
+					plugin.getLogger()
+							.warning("There is no skin value. You have to set skin(base64 value) in (" + key
+									+ ".Item.Skin)");
+					continue;
+				}
+
+				item = ItemHelper.createSkull(base64, title, desc.toArray(new String[desc.size()]));
+
+				if (enchant) {
+					ItemHelper.addEnchant(item);
+				}
+				if (amount > 1 && amount <= item.getMaxStackSize()) {
+					item.setAmount(amount);
+				}
+			} else {
+				item = createItem(type, title, desc, enchant, amount);
+			}
 			servers.put(place, new ServerItem(item, serverName, closeInv));
 		}
 	}
