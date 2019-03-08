@@ -16,6 +16,11 @@ public class PlayerSkinUtils {
 		String url = "https://sessionserver.mojang.com/session/minecraft/profile/" + uuidStr;
 
 		List<String> list = getPageList(url);
+
+		if (list.size() <= 0) {
+			return null;
+		}
+
 		String data = list.get(0);
 		String textureFirst = "\"properties\":[{\"name\":\"textures\",\"value\":\"";
 

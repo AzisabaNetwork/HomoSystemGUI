@@ -115,6 +115,10 @@ public class ServerSelectConfig {
 
 				if (base64 == null && playerName != null) {
 					base64 = PlayerSkinUtils.getBase64EncodedSkin(playerName);
+					if (base64 == null) {
+						plugin.getLogger().warning("There is no player called '" + playerName + "'");
+						continue;
+					}
 				}
 
 				item = ItemHelper.createSkull(base64, title, desc.toArray(new String[desc.size()]));
