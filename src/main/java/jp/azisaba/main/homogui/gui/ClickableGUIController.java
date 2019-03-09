@@ -47,6 +47,7 @@ public class ClickableGUIController {
 			packageName = parent + ".parkour";
 			// TODO main =
 		} else if (type == ServerType.PATA) {
+			main = new jp.azisaba.main.homogui.gui.pata.MainGUI();
 			 packageName = parent + ".pata";
 			// TODO main =
 		} else if (type != null) {
