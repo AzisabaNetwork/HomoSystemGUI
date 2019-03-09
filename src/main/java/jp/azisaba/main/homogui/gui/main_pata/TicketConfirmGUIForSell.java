@@ -1,4 +1,4 @@
-package jp.azisaba.main.homogui.gui.pata;
+package jp.azisaba.main.homogui.gui.main_pata;
 
 import java.math.BigInteger;
 

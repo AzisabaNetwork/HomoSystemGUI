@@ -1,6 +1,5 @@
-package jp.azisaba.main.homogui.gui.pata;
+package jp.azisaba.main.homogui.gui.main_pata;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.HashMap;
 
@@ -14,15 +13,14 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import jp.azisaba.main.homogui.HomoGUI;
 import jp.azisaba.main.homogui.gui.ClickableGUI;
 import jp.azisaba.main.homogui.gui.ClickableGUIController;
 import jp.azisaba.main.homogui.tickets.DataManager;
 import jp.azisaba.main.homogui.utils.ItemHelper;
-import jp.azisaba.main.homos.Homos;
-import net.milkbowl.vault.economy.Economy;
+import jp.azisaba.main.homos.database.PlayerDataManager;
+import jp.azisaba.main.homos.database.TicketManager;
 
-public class NumberGUIForBuy extends ClickableGUI {
+public class NumberGUIForSell extends ClickableGUI {
 
 	@Override
 	public boolean cancelEvent(Player p, Inventory inv, ItemStack item, InventoryAction action) {
@@ -44,7 +42,7 @@ public class NumberGUIForBuy extends ClickableGUI {
 	public Inventory getInventory(Player p, Object... objects) {
 		Inventory inv = Bukkit.createInventory(null, getInvSize(), getInvTitle());
 
-		inv.setItem(0, getResultItem());
+		inv.setItem(0, getResultItem(p));
 		inv.setItem(1, backSpace);
 		inv.setItem(4, zero);
 		inv.setItem(5, one);
@@ -81,12 +79,17 @@ public class NumberGUIForBuy extends ClickableGUI {
 		max = ItemHelper.createItem(Material.GOLD_INGOT, ChatColor.GOLD + "最大値を指定する");
 	}
 
-	private ItemStack getResultItem() {
+	private ItemStack getResultItem(Player p) {
 		String desc = ChatColor.YELLOW + "チケット1枚あたり" + ChatColor.GREEN + ": " + ChatColor.RED;
-		BigDecimal value = BigDecimal.ZERO;
-		value = new BigDecimal(Homos.getTicketValueManager().getCurrentTicketValue());
+		BigInteger value = BigInteger.ZERO;
+
+		BigInteger bigNum = BigInteger.valueOf(1);
+		value = TicketManager.valueOfTicketsToConvertMoney(p.getUniqueId(), null, bigNum);
+
 		desc += value.toString();
-		return ItemHelper.createItem(Material.WRITABLE_BOOK, ChatColor.GOLD + "0", desc);
+
+		String line2 = ChatColor.GRAY + "10%手数料として引かれています";
+		return ItemHelper.createItem(Material.WRITABLE_BOOK, ChatColor.GOLD + "0", desc, line2);
 	}
 
 	private int getInvSize() {
@@ -94,7 +97,7 @@ public class NumberGUIForBuy extends ClickableGUI {
 	}
 
 	private String getInvTitle() {
-		return ChatColor.RED + "Enter Number for Buy";
+		return ChatColor.RED + "Enter Number for Sell";
 	}
 
 	private HashMap<Player, Long> lastClicked = new HashMap<>();
@@ -134,21 +137,15 @@ public class NumberGUIForBuy extends ClickableGUI {
 			p.closeInventory();
 			p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1, 1);
 		} else if (strip.equals("最大値を指定する")) {
-			Economy econ = HomoGUI.getEconomy();
-			double balance = econ.getBalance(p);
-			BigInteger ticketValue = Homos.getTicketValueManager().getCurrentTicketValue();
 
 			long num;
 
-			BigDecimal amount = BigDecimal.valueOf(balance).divide(new BigDecimal(ticketValue), 2,
-					BigDecimal.ROUND_HALF_UP);
-			num = 0L;
+			BigInteger tickets = PlayerDataManager.getPlayerData(p).getTickets();
 
-			if (amount.compareTo(BigDecimal.valueOf(Long.MAX_VALUE)) > 0) {
+			if (tickets.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) > 0) {
 				num = Long.MAX_VALUE;
 			} else {
-				amount.setScale(0, BigDecimal.ROUND_DOWN);
-				num = amount.longValue();
+				num = tickets.longValue();
 			}
 
 			setBookString(inv, ChatColor.GOLD + "" + num);
@@ -179,9 +176,8 @@ public class NumberGUIForBuy extends ClickableGUI {
 
 			long tickets = Long.parseLong(current);
 
-			BigDecimal value = new BigDecimal(DataManager.getTicketValue().multiply(BigInteger.valueOf(tickets)));
-			if (!HomoGUI.getEconomy().has(p, value.doubleValue())) {
-				setBookString(inv, ChatColor.RED + "十分なお金がありません！");
+			if (DataManager.getPlayerData(p).getTickets().compareTo(BigInteger.valueOf(tickets)) < 0) {
+				setBookString(inv, ChatColor.RED + "十分なチケットがありません！");
 				p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 1);
 				return;
 			}
@@ -247,7 +243,7 @@ public class NumberGUIForBuy extends ClickableGUI {
 	}
 
 	private void clickEnter(Inventory inv, long tickets, Player p) {
-		Inventory confirmInv = ClickableGUIController.getGUI(TicketConfirmGUIForBuy.class).getInventory(p, tickets);
+		Inventory confirmInv = ClickableGUIController.getGUI(TicketConfirmGUIForSell.class).getInventory(p, tickets);
 		p.openInventory(confirmInv);
 	}
 

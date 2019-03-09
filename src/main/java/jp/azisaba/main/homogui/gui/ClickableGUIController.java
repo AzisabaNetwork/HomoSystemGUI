@@ -40,15 +40,11 @@ public class ClickableGUIController {
 		List<ClickableGUI> createdGUIList = new ArrayList<>();
 		String packageName = null;
 
-		if (type == ServerType.MAIN) {
-			packageName = parent + ".main";
-			main = new jp.azisaba.main.homogui.gui.main.MainGUI();
+		if (type == ServerType.MAIN || type == ServerType.PATA) {
+			packageName = parent + ".main_pata";
+			main = new jp.azisaba.main.homogui.gui.main_pata.MainGUI();
 		} else if (type == ServerType.PARKOUR) {
 			packageName = parent + ".parkour";
-			// TODO main =
-		} else if (type == ServerType.PATA) {
-			main = new jp.azisaba.main.homogui.gui.pata.MainGUI();
-			 packageName = parent + ".pata";
 			// TODO main =
 		} else if (type != null) {
 			throw new AuthorNagException("'" + type.toString() + "'サーバー用のGUIはまだ整備されていません。");
