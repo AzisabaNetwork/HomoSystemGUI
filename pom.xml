@@ -63,6 +63,10 @@
 			<id>ender-repo</id>
 			<url>https://ci.ender.zone/plugin/repository/everything/</url>
 		</repository>
+		<repository>
+			<id>rayzr-repo</id>
+			<url>https://cdn.rawgit.com/Rayzr522/maven-repo/master/</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -102,6 +106,11 @@
 			<groupId>org.reflections</groupId>
 			<artifactId>reflections</artifactId>
 			<version>0.9.11</version>
+		</dependency>
+		<dependency>
+			<groupId>me.rayzr522</groupId>
+			<artifactId>jsonmessage</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
 </project>
