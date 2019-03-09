@@ -7,6 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import jp.azisaba.main.homogui.commands.GUICommand;
 import jp.azisaba.main.homogui.gui.ClickableGUIController;
 import jp.azisaba.main.homogui.gui.GUIClickedListenerHub;
+import jp.azisaba.main.homogui.gui.ServerType;
 import jp.azisaba.main.homogui.listeners.BalanceCommandListener;
 import net.md_5.bungee.api.ChatColor;
 import net.milkbowl.vault.economy.Economy;
@@ -27,7 +28,17 @@ public class HomoGUI extends JavaPlugin {
 
 		setupEconomy();
 
-		ClickableGUIController.registerAll();
+		ServerType type = null;
+		try {
+			type = ServerType.valueOf(config.serverType.toUpperCase());
+		} catch (Exception e) {
+			getLogger().warning("GUI for server called '" + config.serverType + "' is not supported.");
+		}
+		if (type == ServerType.UNKNOWN) {
+			getLogger().info("You have to set server value in config.yml");
+		} else if (type != null) {
+			ClickableGUIController.registerAll(type);
+		}
 
 		Bukkit.getPluginManager().registerEvents(new GUIClickedListenerHub(), this);
 		Bukkit.getPluginManager().registerEvents(new BalanceCommandListener(this), this);

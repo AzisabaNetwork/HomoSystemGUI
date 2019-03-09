@@ -1,4 +1,4 @@
-package jp.azisaba.main.homogui.gui;
+package jp.azisaba.main.homogui.gui.main;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -15,6 +15,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import jp.azisaba.main.homogui.HomoGUI;
+import jp.azisaba.main.homogui.gui.ClickableGUI;
+import jp.azisaba.main.homogui.gui.ClickableGUIController;
 import jp.azisaba.main.homogui.tickets.DataManager;
 import jp.azisaba.main.homogui.utils.ItemHelper;
 import jp.azisaba.main.homos.Homos;

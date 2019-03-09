@@ -1,4 +1,4 @@
-package jp.azisaba.main.homogui.gui;
+package jp.azisaba.main.homogui.gui.main;
 
 import java.util.HashMap;
 
@@ -15,6 +15,7 @@ import com.google.common.io.ByteStreams;
 import jp.azisaba.main.homogui.HomoGUI;
 import jp.azisaba.main.homogui.ServerItem;
 import jp.azisaba.main.homogui.ServerSelectConfig;
+import jp.azisaba.main.homogui.gui.ClickableGUI;
 
 public class ServerSelectGUI extends ClickableGUI {
 

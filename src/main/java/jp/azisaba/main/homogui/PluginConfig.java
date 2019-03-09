@@ -19,6 +19,9 @@ public class PluginConfig {
 	private HomoGUI plugin;
 	private FileConfiguration conf;
 
+	@ConfigOptions(path = "ServerType")
+	public String serverType = "Undefined";
+
 	public PluginConfig(HomoGUI plugin) {
 		this.plugin = plugin;
 		this.conf = plugin.getConfig();

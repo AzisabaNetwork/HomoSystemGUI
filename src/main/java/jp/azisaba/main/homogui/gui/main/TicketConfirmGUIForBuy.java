@@ -1,5 +1,6 @@
-package jp.azisaba.main.homogui.gui;
+package jp.azisaba.main.homogui.gui.main;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import org.bukkit.Bukkit;
@@ -13,13 +14,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import jp.azisaba.main.homogui.HomoGUI;
+import jp.azisaba.main.homogui.gui.ClickableGUI;
 import jp.azisaba.main.homogui.tickets.DataManager;
 import jp.azisaba.main.homogui.utils.ItemHelper;
-import jp.azisaba.main.homos.database.TicketManager;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 
-public class TicketConfirmGUIForSell extends ClickableGUI {
+public class TicketConfirmGUIForBuy extends ClickableGUI {
 
 	@Override
 	public void onClick(Player p, Inventory inv, ItemStack item, InventoryAction action) {
@@ -41,11 +42,11 @@ public class TicketConfirmGUIForSell extends ClickableGUI {
 						return;
 					}
 
-					BigInteger bigNum = BigInteger.valueOf(num);
+					BigInteger bigIntNum = BigInteger.valueOf(num);
 
-					BigInteger value = TicketManager.valueOfTicketsToConvertMoney(p.getUniqueId(), null, bigNum);
+					BigDecimal money = new BigDecimal(DataManager.getTicketValue()).multiply(new BigDecimal(bigIntNum));
 
-					EconomyResponse r = econ.depositPlayer(p, value.doubleValue());
+					EconomyResponse r = econ.withdrawPlayer(p, money.doubleValue());
 					if (!r.transactionSuccess()) {
 						Bukkit.broadcastMessage(r.errorMessage);
 						sendTitle(p, false);
@@ -54,14 +55,14 @@ public class TicketConfirmGUIForSell extends ClickableGUI {
 
 					boolean success = false;
 					try {
-						success = DataManager.removeTicket(p, bigNum);
+						success = DataManager.addTicket(p, bigIntNum);
 					} catch (Exception e) {
 						e.printStackTrace();
 						success = false;
 					}
 
 					if (!success) {
-						r = econ.withdrawPlayer(p, value.doubleValue());
+						r = econ.depositPlayer(p, money.doubleValue());
 						if (!r.transactionSuccess()) {
 							Bukkit.broadcastMessage(r.errorMessage);
 						}
@@ -82,7 +83,7 @@ public class TicketConfirmGUIForSell extends ClickableGUI {
 	private void sendTitle(Player p, boolean success) {
 
 		if (success) {
-			String sub = ChatColor.DARK_GREEN + "売却に成功しました！";
+			String sub = ChatColor.DARK_GREEN + "購入に成功しました！";
 
 			p.sendTitle("", sub, 0, 40, 10);
 			p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 1);
@@ -118,7 +119,7 @@ public class TicketConfirmGUIForSell extends ClickableGUI {
 		ItemStack ok = getConfirmItem();
 		ItemStack no = getCancelItem();
 
-		ItemStack sign = ItemHelper.createItem(Material.SIGN, ChatColor.YELLOW + "" + tickets + "チケットを売却");
+		ItemStack sign = ItemHelper.createItem(Material.SIGN, ChatColor.YELLOW + "" + tickets + "チケットを購入");
 
 		inv.setItem(0, no);
 		inv.setItem(1, no);
@@ -145,7 +146,7 @@ public class TicketConfirmGUIForSell extends ClickableGUI {
 	}
 
 	private String getInvTitle() {
-		return ChatColor.RED + "Confirm - " + ChatColor.RED + "Sell";
+		return ChatColor.RED + "Confirm - " + ChatColor.RED + "Buy";
 	}
 
 	private int getInvSize() {

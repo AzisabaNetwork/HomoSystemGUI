@@ -1,15 +1,20 @@
 package jp.azisaba.main.homogui.gui;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.plugin.AuthorNagException;
+
+import jp.azisaba.main.homogui.HomoGUI;
+import jp.azisaba.main.homogui.utils.GetClassList;
 
 public class ClickableGUIController {
 
 	private static List<ClickableGUI> guiList = new ArrayList<>();
+	private static ClickableGUI main = null;
 
 	protected static void addGUI(ClickableGUI gui) {
 		if (!guiList.contains(gui)) {
@@ -29,24 +34,53 @@ public class ClickableGUIController {
 		return guiList;
 	}
 
-	public static void registerAll() {
+	private static final String parent = "jp.azisaba.main.homogui.gui";
+
+	public static void registerAll(ServerType type) {
 		List<ClickableGUI> createdGUIList = new ArrayList<>();
+		String packageName = null;
 
-		createdGUIList.add(new MainGUI());
-		createdGUIList.add(new ServerSelectGUI());
-		createdGUIList.add(new TicketGUI());
-		createdGUIList.addAll(Arrays.asList(new NumberGUIForBuy(), new NumberGUIForSell()));
-		createdGUIList.addAll(Arrays.asList(new TicketConfirmGUIForBuy(), new TicketConfirmGUIForSell()));
+		if (type == ServerType.MAIN) {
+			packageName = parent + ".main";
+			main = new jp.azisaba.main.homogui.gui.main.MainGUI();
+		} else if (type == ServerType.PARKOUR) {
+			// TODO
+		} else if (type == ServerType.PATA) {
+			// TODO
+		} else if (type != null) {
+			throw new AuthorNagException("'" + type.toString() + "'サーバー用のGUIはまだ整備されていません。");
+		} else {
+			throw new IllegalArgumentException("type mustn't be null.");
+		}
 
-		for (ClickableGUI gui : createdGUIList) {
-			if (!guiList.contains(gui)) {
-				gui.onRegister();
-				guiList.add(gui);
+		if (packageName != null) {
+			try {
+				Set<Class<? extends ClickableGUI>> classes = GetClassList.listClasses(packageName);
+
+				for (Class<?> clazz : classes) {
+					ClickableGUI gui = (ClickableGUI) clazz.newInstance();
+					createdGUIList.add(gui);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
+
+			int count = 0;
+			for (ClickableGUI gui : createdGUIList) {
+				if (!guiList.contains(gui)) {
+					gui.onRegister();
+					guiList.add(gui);
+					count++;
+				}
+			}
+
+			HomoGUI.getInstance().getLogger().info(count + "個のGUIをロードしました。");
+		} else {
+			throw new AuthorNagException("'" + type.toString() + "'サーバー用のGUIはまだ整備されていません。");
 		}
 	}
 
-	protected static ClickableGUI getGUI(Class<? extends ClickableGUI> clazz) {
+	public static ClickableGUI getGUI(Class<? extends ClickableGUI> clazz) {
 
 		for (ClickableGUI gui : guiList) {
 			if (gui.getClass().equals(clazz)) {
@@ -58,6 +92,6 @@ public class ClickableGUIController {
 	}
 
 	public static Inventory getMainInv(Player p) {
-		return getGUI(MainGUI.class).getInventory(p);
+		return main.getInventory(p);
 	}
 }
