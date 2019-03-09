@@ -16,7 +16,7 @@ public class PlayerSkinUtils {
 	}
 
 	public static String getSkinFromUUID(String uuid) {
-		String url = "https://sessionserver.mojang.com/session/minecraft/profile/" + uuid;
+		String url = "https://sessionserver.mojang.com/session/minecraft/profile/" + uuid.replace("-", "");
 
 		List<String> list = getPageList(url);
 
