@@ -1,4 +1,4 @@
-package jp.azisaba.main.homogui.gui.main_pata;
+package jp.azisaba.main.homogui.gui.eco;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

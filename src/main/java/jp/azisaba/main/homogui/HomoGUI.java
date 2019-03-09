@@ -34,7 +34,7 @@ public class HomoGUI extends JavaPlugin {
 		} catch (Exception e) {
 			getLogger().warning("GUI for server called '" + config.serverType + "' is not supported.");
 		}
-		if (type == ServerType.UNKNOWN) {
+		if (type == ServerType.UNDEFINED) {
 			getLogger().info("You have to set server value in config.yml");
 		} else if (type != null) {
 			ClickableGUIController.registerAll(type);

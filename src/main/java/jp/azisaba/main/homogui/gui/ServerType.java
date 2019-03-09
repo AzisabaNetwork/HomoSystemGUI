@@ -2,6 +2,6 @@ package jp.azisaba.main.homogui.gui;
 
 public enum ServerType {
 
-	MAIN, PARKOUR, PATA, UNKNOWN
+	ECO, OTHERS, MAIN, LOBBY, PATA, RPG, PVP, PARKOUR, EVENT, CASINO, MINIGAME, UNDEFINED
 
 }

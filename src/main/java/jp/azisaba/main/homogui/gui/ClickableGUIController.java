@@ -1,6 +1,7 @@
 package jp.azisaba.main.homogui.gui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -40,12 +41,15 @@ public class ClickableGUIController {
 		List<ClickableGUI> createdGUIList = new ArrayList<>();
 		String packageName = null;
 
-		if (type == ServerType.MAIN || type == ServerType.PATA) {
-			packageName = parent + ".main_pata";
-			main = new jp.azisaba.main.homogui.gui.main_pata.MainGUI();
-		} else if (type == ServerType.PARKOUR) {
-			packageName = parent + ".parkour";
-			// TODO main =
+		if (Arrays.asList(ServerType.ECO, ServerType.MAIN, ServerType.PATA).contains(type)) {
+			packageName = parent + ".eco";
+			main = new jp.azisaba.main.homogui.gui.eco.MainGUI();
+			createdGUIList.add(new ServerSelectGUI());
+		} else if (Arrays.asList(ServerType.OTHERS, ServerType.EVENT, ServerType.LOBBY, ServerType.MINIGAME,
+				ServerType.PARKOUR, ServerType.PVP, ServerType.RPG).contains(type)) {
+			packageName = parent + ".others";
+			main = new jp.azisaba.main.homogui.gui.others.MainGUI();
+			createdGUIList.add(new ServerSelectGUI());
 		} else if (type != null) {
 			throw new AuthorNagException("'" + type.toString() + "'サーバー用のGUIはまだ整備されていません。");
 		} else {
