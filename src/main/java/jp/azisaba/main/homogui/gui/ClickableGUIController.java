@@ -44,9 +44,11 @@ public class ClickableGUIController {
 			packageName = parent + ".main";
 			main = new jp.azisaba.main.homogui.gui.main.MainGUI();
 		} else if (type == ServerType.PARKOUR) {
-			// TODO
+			packageName = parent + ".parkour";
+			// TODO main =
 		} else if (type == ServerType.PATA) {
-			// TODO
+			 packageName = parent + ".pata";
+			// TODO main =
 		} else if (type != null) {
 			throw new AuthorNagException("'" + type.toString() + "'サーバー用のGUIはまだ整備されていません。");
 		} else {
@@ -75,8 +77,6 @@ public class ClickableGUIController {
 			}
 
 			HomoGUI.getInstance().getLogger().info(count + "個のGUIをロードしました。");
-		} else {
-			throw new AuthorNagException("'" + type.toString() + "'サーバー用のGUIはまだ整備されていません。");
 		}
 	}
 
