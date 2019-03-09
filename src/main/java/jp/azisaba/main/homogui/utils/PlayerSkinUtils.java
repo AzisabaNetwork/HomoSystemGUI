@@ -10,10 +10,13 @@ import java.util.List;
 
 public class PlayerSkinUtils {
 
-	public static String getBase64EncodedSkin(String playerName) {
+	public static String getSkinFromPlayerName(String playerName) {
 		String uuidStr = getUUID(playerName);
+		return getSkinFromUUID(uuidStr);
+	}
 
-		String url = "https://sessionserver.mojang.com/session/minecraft/profile/" + uuidStr;
+	public static String getSkinFromUUID(String uuid) {
+		String url = "https://sessionserver.mojang.com/session/minecraft/profile/" + uuid;
 
 		List<String> list = getPageList(url);
 

@@ -108,11 +108,18 @@ public class ServerSelectConfig {
 			if (type == Material.PLAYER_HEAD) {
 				String base64 = conf.getString(key + ".Item.Skin", null);
 				String playerName = conf.getString(key + ".Item.PlayerName", null);
-				if (base64 == null && playerName == null) {
+				String uuid = conf.getString(key + ".Item.UUID", null);
+				if (base64 == null && playerName == null && uuid == null) {
 					plugin.getLogger().warning("There is no player data.");
 					item = ItemHelper.createItem(Material.BARRIER, title, desc.toArray(new String[desc.size()]));
+				} else if (base64 == null && uuid != null) {
+					base64 = PlayerSkinUtils.getSkinFromUUID(uuid);
+					if (base64 == null) {
+						plugin.getLogger().warning("There is no player's uuid called '" + uuid + "'");
+						item = ItemHelper.createItem(Material.BARRIER, title, desc.toArray(new String[desc.size()]));
+					}
 				} else if (base64 == null && playerName != null) {
-					base64 = PlayerSkinUtils.getBase64EncodedSkin(playerName);
+					base64 = PlayerSkinUtils.getSkinFromPlayerName(playerName);
 					if (base64 == null) {
 						plugin.getLogger().warning("There is no player called '" + playerName + "'");
 						item = ItemHelper.createItem(Material.BARRIER, title, desc.toArray(new String[desc.size()]));
