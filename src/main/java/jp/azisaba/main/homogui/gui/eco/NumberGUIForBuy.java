@@ -19,7 +19,7 @@ import jp.azisaba.main.homogui.gui.ClickableGUI;
 import jp.azisaba.main.homogui.gui.ClickableGUIController;
 import jp.azisaba.main.homogui.tickets.DataManager;
 import jp.azisaba.main.homogui.utils.ItemHelper;
-import jp.azisaba.main.homos.Homos;
+import jp.azisaba.main.homos.HomoSystem;
 import net.milkbowl.vault.economy.Economy;
 
 public class NumberGUIForBuy extends ClickableGUI {
@@ -84,7 +84,7 @@ public class NumberGUIForBuy extends ClickableGUI {
 	private ItemStack getResultItem() {
 		String desc = ChatColor.YELLOW + "チケット1枚あたり" + ChatColor.GREEN + ": " + ChatColor.RED;
 		BigDecimal value = BigDecimal.ZERO;
-		value = new BigDecimal(Homos.getTicketValueManager().getCurrentTicketValue());
+		value = new BigDecimal(HomoSystem.getTicketValueManager().getCurrentTicketValue());
 		desc += value.toString();
 		return ItemHelper.createItem(Material.WRITABLE_BOOK, ChatColor.GOLD + "0", desc);
 	}
@@ -136,7 +136,7 @@ public class NumberGUIForBuy extends ClickableGUI {
 		} else if (strip.equals("最大値を指定する")) {
 			Economy econ = HomoGUI.getEconomy();
 			double balance = econ.getBalance(p);
-			BigInteger ticketValue = Homos.getTicketValueManager().getCurrentTicketValue();
+			BigInteger ticketValue = HomoSystem.getTicketValueManager().getCurrentTicketValue();
 
 			long num;
 
