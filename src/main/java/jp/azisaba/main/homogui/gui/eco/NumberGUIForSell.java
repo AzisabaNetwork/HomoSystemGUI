@@ -42,7 +42,11 @@ public class NumberGUIForSell extends ClickableGUI {
 	public Inventory getInventory(Player p, Object... objects) {
 		Inventory inv = Bukkit.createInventory(null, getInvSize(), getInvTitle());
 
-		inv.setItem(0, getResultItem(p));
+		ItemStack result = getResultItem(p);
+		if (result == null) {
+			return null;
+		}
+		inv.setItem(0, result);
 		inv.setItem(1, backSpace);
 		inv.setItem(4, zero);
 		inv.setItem(5, one);
@@ -84,7 +88,13 @@ public class NumberGUIForSell extends ClickableGUI {
 		BigInteger value = BigInteger.ZERO;
 
 		BigInteger bigNum = BigInteger.valueOf(1);
-		value = TicketManager.valueOfTicketsToConvertMoney(p.getUniqueId(), null, bigNum);
+		try {
+			value = TicketManager.valueOfTicketsToConvertMoney(p.getUniqueId(), null, bigNum);
+		} catch (IllegalArgumentException e) {
+			p.closeInventory();
+			p.sendMessage(ChatColor.RED + "このサーバーではチケットを売ることはできません。");
+			return null;
+		}
 
 		desc += value.toString();
 

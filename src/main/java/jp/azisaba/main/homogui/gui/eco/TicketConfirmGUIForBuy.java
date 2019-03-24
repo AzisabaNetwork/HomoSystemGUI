@@ -43,7 +43,6 @@ public class TicketConfirmGUIForBuy extends ClickableGUI {
 					}
 
 					BigInteger bigIntNum = BigInteger.valueOf(num);
-
 					BigDecimal money = new BigDecimal(DataManager.getTicketValue()).multiply(new BigDecimal(bigIntNum));
 
 					EconomyResponse r = econ.withdrawPlayer(p, money.doubleValue());
@@ -56,6 +55,8 @@ public class TicketConfirmGUIForBuy extends ClickableGUI {
 					boolean success = false;
 					try {
 						success = DataManager.addTicket(p, bigIntNum);
+					} catch (IllegalStateException e) {
+						success = false;
 					} catch (Exception e) {
 						e.printStackTrace();
 						success = false;

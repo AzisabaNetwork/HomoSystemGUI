@@ -25,6 +25,9 @@ public class TicketGUI extends ClickableGUI {
 			numberInv = ClickableGUIController.getGUI(NumberGUIForBuy.class).getInventory(p);
 		} else if (meta.getDisplayName().equals(ChatColor.GREEN + "売却")) {
 			numberInv = ClickableGUIController.getGUI(NumberGUIForSell.class).getInventory(p);
+			if (numberInv == null) {
+				return;
+			}
 		} else {
 			return;
 		}
