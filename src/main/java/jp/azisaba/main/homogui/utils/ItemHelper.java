@@ -275,7 +275,7 @@ public class ItemHelper {
 
 	private static OfflinePlayer isPlayerExist(String playerName) {
 		for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
-			if (playerName.equals(player.getName().toUpperCase()))
+			if (playerName.equalsIgnoreCase(player.getName()))
 				return player;
 		}
 
