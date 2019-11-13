@@ -1,4 +1,4 @@
-name: ${project.name}
+name: HomoGUI
 main: jp.azisaba.main.homogui.HomoGUI
 version: ${project.version}
 author: siloneco
