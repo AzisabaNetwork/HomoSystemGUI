@@ -70,6 +70,10 @@
       <id>rayzr-repo</id>
       <url>https://rayzr.dev/repo/</url>
     </repository>
+    <repository>
+      <id>azisaba-repo</id>
+      <url>https://mvn-repo.azisaba.net/</url>
+    </repository>
   </repositories>
 
   <dependencies>
